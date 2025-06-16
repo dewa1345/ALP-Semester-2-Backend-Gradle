@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign - Recycle</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #5fc16b;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .campaign-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100vw;
+        }
+
+        .campaign-title {
+            color: #fff;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 32px 0;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .campaign-list {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .campaign-card {
+            display: flex;
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.07);
+            align-items: stretch;
+            width: 100%;
+            min-height: 220px;
+        }
+
+        .campaign-img {
+            width: 290px;
+            height: 220px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .campaign-img-fixed {
+            width: 180px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            margin: auto;
+        }
+
+        .campaign-info {
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .campaign-name {
+            color: #2e944b;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+
+        .campaign-desc {
+            color: #222;
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+        }
+
+        .campaign-meta {
+            color: #2e944b;
+            font-size: 1.1rem;
+        }
+
+        .campaign-meta b {
+            color: #388e3c;
+            font-weight: normal;
+        }
+
+        @media (max-width: 768px) {
+            .campaign-title {
+                font-size: 2.5rem;
+            }
+
+            .campaign-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .campaign-img {
+                width: 100%;
+                height: auto;
+            }
+
+            .campaign-info {
+                padding: 16px;
+            }
+
+            .campaign-name {
+                font-size: 1.8rem;
+            }
+
+            .campaign-desc,
+            .campaign-meta {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body style="background: #f3fdf7; margin:0; min-height:100vh;">
+    <nav
+        style="width:100vw; height:60px; background:#2e944b; display:flex; align-items:center; justify-content:space-between; position:fixed; top:0; left:0; z-index:100; box-shadow:0 2px 8px rgba(46,148,75,0.08);">
+        <button onclick="window.history.back()"
+            style="margin-left:24px; background:#fff; color:#2e944b; border:2px solid #2e944b; border-radius:8px; padding:8px 22px 8px 14px; font-weight:600; font-size:1.1rem; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(46,148,75,0.07); cursor:pointer; transition:background 0.15s, color 0.15s;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22"
+                height="22">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            BACK
+        </button>
+        <span
+            style="margin-right:32px; color:#fff; font-size:1.5rem; font-weight:700; letter-spacing:1px;">Campaign</span>
+    </nav>
+    <div style="height:70px;"></div> <!-- Spacer agar konten tidak tertutup navbar -->
+    <div style="display:flex; flex-direction:column; align-items:flex-start; margin-top:0; gap:24px; padding-left:0; padding-top:180vh;">
+        <!-- Card 1 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/event1.jpeg" alt="Beach Cleanup" class="campaign-img-fixed">
+                <button id="likeBtn1" onclick="toggleLike('likeImg1','likeBtn1')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg1" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">Beach Cleanup</h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Membersihkan pantai dari sampah plastik dan
+                    mengedukasi pengunjung tentang pentingnya recycle.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Bali Bersih</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">200 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/21.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/31.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+196
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/event2.jpg" alt="Tree Planting" class="campaign-img-fixed">
+                <button id="likeBtn2" onclick="toggleLike('likeImg2','likeBtn2')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg2" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">Tree Planting</h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Penanaman pohon di area kota untuk
+                    mengurangi polusi dan memperbaiki kualitas udara.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Hijaukan Kota</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">150 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+147
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <!-- Card 3 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/event3.jpeg" alt="River Clean Action" class="campaign-img-fixed">
+                <button id="likeBtn3" onclick="toggleLike('likeImg3','likeBtn3')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg3" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">River Clean Action</h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Aksi membersihkan sungai dari sampah
+                    anorganik dan organik bersama komunitas lokal.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Sungai Bersih</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">120 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/13.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/23.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+117
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <!-- Card 4 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/event4.jpeg" alt="Eco Workshop" class="campaign-img-fixed">
+                <button id="likeBtn4" onclick="toggleLike('likeImg4','likeBtn4')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg4" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">Eco Workshop</h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Workshop edukasi tentang daur ulang dan
+                    pengelolaan sampah rumah tangga.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Eco Edu</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">80 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/14.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/24.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/34.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+77
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <!-- Card 5 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/event5.jpeg" alt="Plastic Free Market" class="campaign-img-fixed">
+                <button id="likeBtn5" onclick="toggleLike('likeImg5','likeBtn5')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg5" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">Plastic Free Market
+                </h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Pasar bebas plastik yang menyediakan produk
+                    ramah lingkungan dan edukasi pengurangan plastik.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Green Market</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">90 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/15.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/25.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/35.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+87
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <!-- Card 6 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/event6.jpg" alt="Zero Waste Class" class="campaign-img-fixed">
+                <button id="likeBtn6" onclick="toggleLike('likeImg6','likeBtn6')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg6" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">Zero Waste Class</h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Kelas edukasi zero waste untuk keluarga dan
+                    anak-anak, belajar mengurangi sampah sejak dini.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Zero Waste ID</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">60 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/16.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/26.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/36.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+57
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <!-- Card 7 -->
+        <div
+            style="background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(46,148,75,0.07); max-width:600px; width:100%; display:flex; flex-direction:row; align-items:center; overflow:hidden; min-height:170px; border:2px solid #e0f5e7; margin-bottom:0; position:relative;">
+            <div
+                style="display:flex; align-items:center; justify-content:center; width:200px; min-width:140px; height:120px; position:relative;">
+                <img src="Gambar/commu1.jpeg" alt="Green Community Meetup" class="campaign-img-fixed">
+                <button id="likeBtn7" onclick="toggleLike('likeImg7','likeBtn7')"
+                    style="position:absolute; left:10px; bottom:10px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s; padding:0;">
+                    <img id="likeImg7" src="Gambar/heart-icon.jpg" alt="Like" style="width:20px; height:20px;">
+                </button>
+            </div>
+            <div
+                style="padding:16px 20px; display:flex; flex-direction:column; justify-content:center; flex:1; min-width:0; position:relative;">
+                <h2 style="color:#2e944b; font-size:1.3rem; font-weight:bold; margin:0 0 6px 0;">Green Community Meetup
+                </h2>
+                <p style="color:#222; font-size:0.98rem; margin-bottom:8px;">Meetup komunitas hijau untuk berbagi
+                    inspirasi, pengalaman, dan kolaborasi aksi lingkungan.</p>
+                <div style="color:#2e944b; font-size:0.98rem; margin-bottom:6px;">
+                    <b>Organized by:</b> <span style="color:#388e3c; font-weight:normal;">Greeners</span><br>
+                    <b>Partisipan:</b> <span style="color:#388e3c; font-weight:normal;">110 orang</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:0.98rem; color:#2e944b; font-weight:700; margin-bottom:3px;">Partisipan:</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://randomuser.me/api/portraits/men/17.jpg" alt="P1"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/women/27.jpg" alt="P2"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <img src="https://randomuser.me/api/portraits/men/37.jpg" alt="P3"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid #2e944b;">
+                        <span style="color:#388e3c; font-size:1rem; font-weight:600; margin-left:4px;">+107
+                            lainnya</span>
+                    </div>
+                </div>
+                <button
+                    style="position:absolute; right:16px; bottom:10px; background:#2e944b; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:600; font-size:1rem; box-shadow:0 2px 8px rgba(46,148,75,0.10); cursor:pointer; transition:background 0.2s;">Join</button>
+            </div>
+        </div>
+        <script>
+            function toggleLike(imgId, btnId) {
+                const likeImg = document.getElementById(imgId);
+                if (likeImg.src.includes('heart-red.png')) {
+                    likeImg.src = 'Gambar/heart-icon.jpg';
+                } else {
+                    likeImg.src = 'Gambar/heart-red.png';
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

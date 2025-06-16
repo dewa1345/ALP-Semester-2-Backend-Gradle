@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homepage Komunitas</title>
+  <link rel="stylesheet" href="homestyle.css" />
+</head>
+<body>
+  <header>
+    <div class="logo" style="font-family: 'Poppins', sans-serif;">
+      EcoV
+    </div>
+
+
+    <div class="nav-profile-container">
+      <nav>
+        <a href="#">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="community.html">Community</a>
+        <a href="Campaign.html">Campaign</a>
+      </nav>
+      <a href="profile.html" class="profile-icon">👤</a>
+    </div>
+  </header>
+
+  <section class="carousel">
+    <div class="carousel-overlay"></div> <!-- Lapisan gelap -->
+    <div class="carousel-track" id="carouselTrack">
+      <img src="Gambar/event1.jpeg" alt="slide 1" />
+      <img src="Gambar/event2.jpg" alt="slide 2" />
+      <img src="Gambar/event3.jpeg" alt="slide 3" />
+      <img src="Gambar/event4.jpeg" alt="slide 4" />
+      <img src="Gambar/event5.jpeg" alt="slide 5" />
+      <img src="Gambar/event6.jpg" alt="slide 6" />
+      <!-- Duplikasi untuk loop -->
+      <img src="Gambar/event1.jpeg" alt="slide 1" />
+      <img src="Gambar/event2.jpg" alt="slide 2" />
+      <img src="Gambar/event3.jpeg" alt="slide 3" />
+      <img src="Gambar/event4.jpeg" alt="slide 4" />
+      <img src="Gambar/event5.jpeg" alt="slide 5" />
+      <img src="Gambar/event6.jpg" alt="slide 6" />
+    </div>
+    <div class="dots" id="carouselDots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </section>
+
+
+  <section class="top-community">
+  <h2 class="top-title">Top Community</h2>
+
+  
+  <div class="community-container">
+    <div class="community-card">
+      <img src="Gambar/commu1.jpeg" alt="comm 1" />
+      <p>Pandawara</p>
+      <div class="card-buttons">
+        <button class="btn-love">❤️</button>
+        <button class="btn-join">+</button>
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="Gambar/commu2.jpg" alt="comm 2" />
+      <p>R3 Community</p>
+      <div class="card-buttons">
+        <button class="btn-love">❤️</button>
+        <button class="btn-join">+</button>
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="Gambar/commu3.jpeg" alt="comm 3" />
+      <p>Recycle.id</p>
+      <div class="card-buttons">
+        <button class="btn-love">❤️</button>
+        <button class="btn-join">+</button>
+      </div>
+    </div>
+
+    <div class="community-card">
+      <img src="Gambar/commu4.jpeg" alt="comm 4" />
+      <p>CleanUp</p>
+      <div class="card-buttons">
+        <button class="btn-love">❤️</button>
+        <button class="btn-join">+</button>
+      </div>
+    </div>
+
+    <div class="community-card">
+      <img src="Gambar/commu5.jpg" alt="comm 5" />
+      <p>Cinta Lingkungan</p>
+      <div class="card-buttons">
+        <button class="btn-love">❤️</button>
+        <button class="btn-join">+</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Tombol buka chat -->
+<!-- Tombol chatbot -->
+<div class="chatbot-button" id="openChat">💬</div>
+
+<!-- Popup Chatbot -->
+<div id="chatPopup">
+  <div id="chatHeader">
+    ChatBot
+    <span id="closeChat" style="cursor:pointer;">❌</span>
+  </div>
+  <div id="chatMessages"></div>
+  <form id="chatForm">
+    <input type="text" id="chatInput" placeholder="Ketik pesan..." />
+    <button type="submit">Kirim</button>
+  </form>
+</div>
+
+<!-- Nama pengguna tersembunyi -->
+<span id="username" style="display: none;">Dewa</span>
+
+
+  <script src="homescript.js"></script>
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recycle Communities Forum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bubble-chat {
+            position: relative;
+            background: #fff;
+            border: 2px solid #222;
+            border-radius: 20px;
+            padding: 12px 16px 12px 16px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            min-width: 120px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .bubble-chat .bubble-tail {
+            position: absolute;
+            left: -18px;
+            top: 18px;
+            width: 24px;
+            height: 24px;
+            overflow: hidden;
+        }
+
+        .bubble-chat .bubble-tail svg {
+            display: block;
+        }
+
+        .bubble-chat .bubble-content {
+            flex: 1;
+        }
+
+        .bubble-chat .bubble-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #678e34;
+            object-fit: cover;
+            margin-right: 6px;
+        }
+
+        .bubble-chat .bubble-name {
+            font-weight: 600;
+            font-size: 0.95em;
+            color: #678e34;
+            margin-bottom: 2px;
+        }
+
+        .bubble-chat .bubble-text {
+            font-size: 1em;
+            color: #222;
+            word-break: break-word;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0 0 0 / 60%);
+        }
+
+        .modal.flex {
+            display: flex !important;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background-color: #f6fdf4;
+            margin: auto;
+            padding: 24px 18px;
+            border: 1.5px solid #b5d6a2;
+            width: 95%;
+            max-width: 420px;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px 0 rgba(103, 142, 52, 0.10);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #678e34;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="bg-green-50 min-h-screen text-gray-800">
+    <div class="container mx-auto py-8 px-4">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3 bg-white rounded-lg px-3 py-1">
+                <button onclick="window.history.back()"
+                    class="text-[#678E34] bg-white hover:bg-gray-100 px-3 py-1 rounded font-semibold flex items-center gap-1 border border-[#678E34]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                </button>
+                <img src="logo.png" alt="Logo" class="h-8 w-8 object-contain" />
+            </div>
+            <h1 class="text-3xl font-bold text-[#678E34]">Forum Komunitas Recycle</h1>
+        </div>
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar komunitas -->
+            <aside class="lg:w-1/4 w-full">
+                <div class="bg-white rounded-xl shadow p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
+                        <button
+                            class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
+                            style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span class="hidden sm:inline">Create Community</span>
+                        </button>
+                    </div>
+                    <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
+                        <ul id="communityList" class="space-y-2">
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('Peduli_Mks')"><img
+                                        src="https://lppm.unusa.ac.id/wp-content/uploads/2023/09/Picture1.png"
+                                        alt="Peduli_Mks" class="w-8 h-8 rounded object-cover">Peduli_Mks</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('Recycle.id')"><img
+                                        src="https://morethanstrata.com.au/wp-content/uploads/2023/09/1123213213123.jpg"
+                                        alt="Recycle.id" class="w-8 h-8 rounded object-cover">Recycle.id</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('Clean.id')"><img
+                                        src="
+                                    https://neatclean.com/cdn/shop/articles/Non-Toxic-Cleaning---Neat-Clean_9a290919-5302-4b53-ae29-311e9ec509ab.jpg?v=1742909575"
+                                        alt="Clean.id" class="w-8 h-8 rounded object-cover">Clean.id</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('HijauBersama')"><img src="
+                                    https://dispendik.surabaya.go.id/wp-content/uploads/2015/03/banu-smp-pgri-6.jpg"
+                                        alt="HijauBersama" class="w-8 h-8 rounded object-cover">HijauBersama</button>
+                            </li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('EcoYouth')"><img
+                                        src="
+                                    https://newsroom.toyota.co.id/app/sam/assets/news/9a49149705bf0b8e38690e6ca6d6d5ed.jpeg" alt="EcoYouth"
+                                        class="w-8 h-8 rounded object-cover">EcoYouth</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('ZeroWaste')"><img
+                                        src="
+                                    https://shopequo.com/cdn/shop/articles/Zero-Waste_2bde2b51-61ac-48a6-b1ee-47b02ba2a641.png?v=1701594753&width=1600"
+                                        alt="ZeroWaste" class="w-8 h-8 rounded object-cover">ZeroWaste</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('GreenSteps')"><img
+                                        src="https://loquiz.com/wpmainpage/wp-content/uploads/2022/08/Logo-Green-Steps.png"
+                                        alt="GreenSteps" class="w-8 h-8 rounded object-cover">GreenSteps</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('EcoWarriors')"><img
+                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEC_u8VMK6fgf2lz_mTeHkegN_OegS8egMrQ&s"
+                                        alt="EcoWarriors" class="w-8 h-8 rounded object-cover">EcoWarriors</button></li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('RecycleHeroes')"><img
+                                        src="https://s3-eu-west-1.amazonaws.com/spacehive/bf86e8b5-3ebe-48dc-8268-a4e792d0fb74_xlarge_eco-warrior.jpg"
+                                        alt="RecycleHeroes" class="w-8 h-8 rounded object-cover">RecycleHeroes</button>
+                            </li>
+                            <li><button
+                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
+                                    onclick="selectCommunity('SampahBijak')"><img
+                                        src="https://www.kreasa.id/wp-content/uploads/2021/06/kreasa-bijak-kelola-sampah.png"
+                                        alt="SampahBijak" class="w-8 h-8 rounded object-cover">SampahBijak</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+            <!-- Konten komunitas -->
+            <main class="flex-1">
+                <div id="communityContent" class="bg-white rounded-xl shadow p-6 min-h-[350px]">
+                    <p class="text-gray-500 text-center">Silakan pilih komunitas untuk melihat detailnya.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Create Community -->
+    <div id="createCommunityModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateCommunityModal()">&times;</span>
+            <h2 class="text-xl font-bold mb-4 text-[#678E34]">Buat Komunitas Baru</h2>
+            <form id="createCommunityForm" class="space-y-3">
+                <div>
+                    <label class="block font-semibold mb-1">Nama Anda</label>
+                    <input type="text" name="nama" class="w-full border rounded px-3 py-2" required>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Alamat</label>
+                    <input type="text" name="alamat" class="w-full border rounded px-3 py-2" required>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Nama Komunitas</label>
+                    <input type="text" name="namakomunitas" class="w-full border rounded px-3 py-2" required>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Campaign (pisahkan dengan koma)</label>
+                    <input type="text" name="campaign" class="w-full border rounded px-3 py-2"
+                        placeholder="Contoh: Bersih Sungai, Edukasi Sampah" required>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Deskripsi Komunitas</label>
+                    <textarea name="deskripsi" class="w-full border rounded px-3 py-2" required></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Logo Komunitas</label>
+                    <input type="file" name="logo" accept="image/*" class="w-full border rounded px-3 py-2">
+                </div>
+                <button type="submit"
+                    class="w-full bg-[#678E34] text-white py-2 rounded font-bold hover:bg-[#4a6b24]">Create</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data komunitas 
+        const communities = {
+            'Peduli_Mks': {
+                name: 'Peduli_Mks',
+                description: 'Komunitas peduli lingkungan Makassar yang fokus pada edukasi dan aksi recycle di masyarakat.',
+                events: [
+                    'Aksi Bersih Pantai Losari (2025)',
+                    'Workshop Daur Ulang Sampah Plastik',
+                    'Kampanye Recycle Goes to School'
+                ],
+                members: [
+                    { name: 'Alya', avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
+                    { name: 'Raka', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+                    { name: 'Bimo', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+                    { name: 'Dewi', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+                    { name: 'Mike', avatar: 'https://randomuser.me/api/portraits/men/41.jpg' },
+                    { name: 'Brita', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' }
+                ]
+            },
+            'Recycle.id': {
+                name: 'Recycle.id',
+                description: 'Platform komunitas nasional untuk berbagi inspirasi dan aksi nyata daur ulang.',
+                events: [
+                    'Webinar Recycle 101',
+                    'Kompetisi Inovasi Daur Ulang',
+                    'Eco Market Day'
+                ],
+                members: [
+                    { name: 'Sinta', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
+                    { name: 'Rizal', avatar: 'https://randomuser.me/api/portraits/men/12.jpg' },
+                    { name: 'Lina', avatar: 'https://randomuser.me/api/portraits/women/22.jpg' },
+                    { name: 'Gerald', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
+                    { name: 'Rakha', avatar: 'https://randomuser.me/api/portraits/men/23.jpg' }
+                ]
+            },
+            'Clean.id': {
+                name: 'Clean.id',
+                description: 'Komunitas yang mengajak masyarakat hidup bersih dan minim sampah.',
+                events: [
+                    'Clean Up Day Nasional',
+                    'Pelatihan Kompos Rumah Tangga',
+                    'Green Talk: Hidup Minim Sampah'
+                ],
+                members: [
+                    { name: 'Dian', avatar: 'https://randomuser.me/api/portraits/women/33.jpg' },
+                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/33.jpg' },
+                    { name: 'Brigita', avatar: 'https://randomuser.me/api/portraits/women/34.jpg' },
+                    { name: 'Aldo', avatar: 'https://randomuser.me/api/portraits/men/34.jpg' }
+                ]
+            },
+            'HijauBersama': {
+                name: 'HijauBersama',
+                description: 'Komunitas kolaborasi antar pelajar dan mahasiswa untuk aksi hijau dan recycle.',
+                events: [
+                    'Penanaman Pohon Bersama',
+                    'Eco Youth Camp',
+                    'Recycling Challenge'
+                ],
+                members: [
+                    { name: 'Bima', avatar: 'https://randomuser.me/api/portraits/men/35.jpg' },
+                    { name: 'Lina', avatar: 'https://randomuser.me/api/portraits/women/35.jpg' },
+                    { name: 'Rafi', avatar: 'https://randomuser.me/api/portraits/men/36.jpg' },
+                    { name: 'Gerry', avatar: 'https://randomuser.me/api/portraits/men/37.jpg' }
+                ]
+            },
+            'EcoYouth': {
+                name: 'EcoYouth',
+                description: 'Komunitas muda-mudi yang aktif mengedukasi pentingnya recycle dan gaya hidup hijau.',
+                events: [
+                    'Eco Youth Festival',
+                    'Kelas Online: Upcycle Barang Bekas',
+                    'Aksi Sosial Lingkungan'
+                ],
+                members: [
+                    { name: 'Aurel', avatar: 'https://randomuser.me/api/portraits/women/36.jpg' },
+                    { name: 'Reno', avatar: 'https://randomuser.me/api/portraits/men/38.jpg' },
+                    { name: 'Bella', avatar: 'https://randomuser.me/api/portraits/women/37.jpg' },
+                    { name: 'Mika', avatar: 'https://randomuser.me/api/portraits/men/39.jpg' }
+                ]
+            },
+            'ZeroWaste': {
+                name: 'ZeroWaste',
+                description: 'Komunitas yang berfokus pada pengurangan sampah dan edukasi zero waste lifestyle.',
+                events: [
+                    'Zero Waste Challenge',
+                    'Workshop Kompos',
+                    'Kampanye Tanpa Plastik'
+                ],
+                members: [
+                    { name: 'Dewi', avatar: 'https://randomuser.me/api/portraits/women/38.jpg' },
+                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/40.jpg' },
+                    { name: 'Brina', avatar: 'https://randomuser.me/api/portraits/women/39.jpg' }
+                ]
+            },
+            'GreenSteps': {
+                name: 'GreenSteps',
+                description: 'Komunitas aksi hijau untuk generasi muda yang peduli lingkungan.',
+                events: [
+                    'Green Steps Marathon',
+                    'Webinar Eco Living',
+                    'Aksi Tanam Pohon'
+                ],
+                members: [
+                    { name: 'Alya', avatar: 'https://randomuser.me/api/portraits/women/40.jpg' },
+                    { name: 'Raka', avatar: 'https://randomuser.me/api/portraits/men/41.jpg' },
+                    { name: 'Gerry', avatar: 'https://randomuser.me/api/portraits/men/42.jpg' }
+                ]
+            },
+            'EcoWarriors': {
+                name: 'EcoWarriors',
+                description: 'Komunitas pejuang lingkungan yang aktif di berbagai kota.',
+                events: [
+                    'Eco Warriors Camp',
+                    'Pelatihan Daur Ulang',
+                    'Aksi Bersih Sungai'
+                ],
+                members: [
+                    { name: 'Brina', avatar: 'https://randomuser.me/api/portraits/women/41.jpg' },
+                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/43.jpg' },
+                    { name: 'Dewi', avatar: 'https://randomuser.me/api/portraits/women/42.jpg' }
+                ]
+            },
+            'RecycleHeroes': {
+                name: 'RecycleHeroes',
+                description: 'Komunitas pahlawan daur ulang yang menginspirasi aksi nyata.',
+                events: [
+                    'Hero Day',
+                    'Lomba Kreasi Barang Bekas',
+                    'Seminar Recycle'
+                ],
+                members: [
+                    { name: 'Raka', avatar: 'https://randomuser.me/api/portraits/men/44.jpg' },
+                    { name: 'Gerry', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+                    { name: 'Lina', avatar: 'https://randomuser.me/api/portraits/women/43.jpg' }
+                ]
+            },
+            'SampahBijak': {
+                name: 'SampahBijak',
+                description: 'Komunitas edukasi dan aksi bijak kelola sampah.',
+                events: [
+                    'Bijak Sampah Festival',
+                    'Pelatihan Bank Sampah',
+                    'Aksi Bersih Kota'
+                ],
+                members: [
+                    { name: 'Aurel', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+                    { name: 'Brina', avatar: 'https://randomuser.me/api/portraits/women/45.jpg' },
+                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/46.jpg' }
+                ]
+            }
+        };
+
+        let selectedCommunityKey = null;
+        let joinedCommunities = JSON.parse(localStorage.getItem('joinedCommunities') || '[]');
+
+        function renderCommunityList() {
+            const list = document.getElementById('communityList');
+            if (!list) return;
+            // Pengurutan Komunitas
+            let keys = Object.keys(communities);
+            if (selectedCommunityKey && joinedCommunities.includes(selectedCommunityKey)) {
+                keys = [selectedCommunityKey, ...joinedCommunities.filter(k => k !== selectedCommunityKey), ...keys.filter(k => !joinedCommunities.includes(k) && k !== selectedCommunityKey)];
+            } else {
+                keys = [...joinedCommunities, ...keys.filter(k => !joinedCommunities.includes(k))];
+            }
+            let customLogos = {};
+            try { customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}'); } catch { }
+            list.innerHTML = keys.map(key => {
+                const c = communities[key];
+                const joined = joinedCommunities.includes(key);
+                // ga,mbar sebelumnya
+                let imgUrl = '';
+                if (customLogos[key]) {
+                    imgUrl = customLogos[key];
+                } else {
+                    switch (key) {
+                        case 'Peduli_Mks': imgUrl = 'https://lppm.unusa.ac.id/wp-content/uploads/2023/09/Picture1.png'; break;
+                        case 'Recycle.id': imgUrl = 'https://morethanstrata.com.au/wp-content/uploads/2023/09/1123213213123.jpg'; break;
+                        case 'Clean.id': imgUrl = 'https://neatclean.com/cdn/shop/articles/Non-Toxic-Cleaning---Neat-Clean_9a290919-5302-4b53-ae29-311e9ec509ab.jpg?v=1742909575'; break;
+                        case 'HijauBersama': imgUrl = 'https://dispendik.surabaya.go.id/wp-content/uploads/2015/03/banu-smp-pgri-6.jpg'; break;
+                        case 'EcoYouth': imgUrl = 'https://newsroom.toyota.co.id/app/sam/assets/news/9a49149705bf0b8e38690e6ca6d6d5ed.jpeg'; break;
+                        case 'ZeroWaste': imgUrl = 'https://shopequo.com/cdn/shop/articles/Zero-Waste_2bde2b51-61ac-48a6-b1ee-47b02ba2a641.png?v=1701594753&width=1600'; break;
+                        case 'GreenSteps': imgUrl = 'https://loquiz.com/wpmainpage/wp-content/uploads/2022/08/Logo-Green-Steps.png'; break;
+                        case 'EcoWarriors': imgUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEC_u8VMK6fgf2lz_mTeHkegN_OegS8egMrQ&s'; break;
+                        case 'RecycleHeroes': imgUrl = 'https://s3-eu-west-1.amazonaws.com/spacehive/bf86e8b5-3ebe-48dc-8268-a4e792d0fb74_xlarge_eco-warrior.jpg'; break;
+                        case 'SampahBijak': imgUrl = 'https://www.kreasa.id/wp-content/uploads/2021/06/kreasa-bijak-kelola-sampah.png'; break;
+                        default: imgUrl = c.logo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+                    }
+                }
+                return `<li><button class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100 relative" onclick="selectCommunity('${key}')">
+            <img src="${imgUrl}" alt="${c.name}" class="w-8 h-8 rounded object-cover">
+            ${c.name}
+            ${joined ? '<span class=\'ml-2 px-2 py-0.5 rounded-full bg-[#678E34] text-white text-xs\'>Joined</span>' : ''}
+        </button></li>`;
+            }).join('');
+        }
+
+        function selectCommunity(key) {
+            const c = communities[key];
+            if (!c) return;
+            selectedCommunityKey = key;
+            renderCommunityList();
+            document.getElementById('communityContent').innerHTML = `
+        <h2 class="text-2xl font-bold text-[#678E34] mb-2">${c.name}</h2>
+        <p class="mb-4 text-gray-700">${c.description}</p>
+        <div class="mb-4">
+          <h3 class="font-semibold text-lg mb-1">Event Komunitas</h3>
+          <ul class="list-disc pl-6 text-gray-700">
+            ${c.events.map(e => `<li>${e}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="mb-6">
+          <h3 class="font-semibold text-lg mb-1">Anggota Komunitas</h3>
+          <ul class="flex flex-wrap gap-2 mb-4">
+            ${c.members.map(m => `<li class="bg-green-100 text-[#678E34] px-3 py-1 rounded-full text-sm">${m.name}</li>`).join('')}
+          </ul>
+          <div class="flex flex-wrap gap-4 mb-2">
+            ${c.members.map(m => `<img src="${m.avatar}" alt="${m.name}" class="w-12 h-12 object-cover rounded-full border-2 border-[#678E34]" />`).join('')}
+          </div>
+        </div>
+        <div class="mb-20">
+          <h3 class="font-semibold text-lg mb-2">Chat Komunitas</h3>
+          <div class="bg-green-50 border border-green-200 rounded-lg p-3 h-40 overflow-y-auto mb-2" id="chatBox">
+            <div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>
+          </div>
+          <div class="flex gap-2">
+            <input id="chatInput" type="text" class="flex-1 border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#678E34]" placeholder="Ketik pesan...">
+            <button onclick="sendChat()" class="bg-[#678E34] text-white px-4 py-1 rounded hover:bg-[#4a6b24]">Kirim</button>
+          </div>
+        </div>
+        ${joinedCommunities.includes(key) ? `<button onclick="leaveCommunity('${key}')" id="leaveBtn" class="fixed bottom-8 right-8 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-800 z-50">Leave Komunitas</button>` : `<button onclick="joinCommunity('${key}')" id="joinBtn" class="fixed bottom-8 right-8 bg-[#678E34] text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-[#4a6b24] z-50">Join Komunitas</button>`}
+      `;
+            setTimeout(() => {
+                const chatInput = document.getElementById('chatInput');
+                if (chatInput) {
+                    chatInput.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter') {
+                            sendChat();
+                        }
+                    });
+                }
+                renderChatHistory();
+            }, 100);
+        }
+
+        function joinCommunity(key) {
+            if (!joinedCommunities.includes(key)) {
+                joinedCommunities.unshift(key);
+                localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
+            }
+            selectCommunity(key);
+            renderCommunityList();
+        }
+
+        function leaveCommunity(key) {
+            joinedCommunities = joinedCommunities.filter(k => k !== key);
+            localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
+            renderCommunityList();
+            selectCommunity(key);
+        }
+
+        //  history chat komunitas di localStorage
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const chatBox = document.getElementById('chatBox');
+            if (input && chatBox && input.value.trim() !== '' && selectedCommunityKey) {
+                const c = communities[selectedCommunityKey];
+                const idx = Math.floor(Math.random() * c.members.length);
+                const member = c.members[idx];
+                // Format waktu (jam:menit, 2 digit)
+                const now = new Date();
+                const jam = now.getHours().toString().padStart(2, '0');
+                const menit = now.getMinutes().toString().padStart(2, '0');
+                const waktu = jam + '.' + menit;
+                // Simpan ke localStorage
+                let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '{}');
+                if (!chatHistory[selectedCommunityKey]) chatHistory[selectedCommunityKey] = [];
+                chatHistory[selectedCommunityKey].push({
+                    name: member.name,
+                    avatar: member.avatar,
+                    text: input.value,
+                    time: waktu
+                });
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                renderChatHistory();
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function renderChatHistory() {
+            const chatBox = document.getElementById('chatBox');
+            if (!chatBox || !selectedCommunityKey) return;
+            let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '{}');
+            const history = chatHistory[selectedCommunityKey] || [];
+            if (history.length === 0) {
+                chatBox.innerHTML = '<div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>';
+                return;
+            }
+            chatBox.innerHTML = history.map((msg, i) => `
+                <div class="bubble-chat group relative">
+                    <img src="${msg.avatar}" class="bubble-avatar" alt="${msg.name}">
+                    <div class="bubble-content">
+                        <div class="bubble-name">${msg.name}</div>
+                        <div class="bubble-text">${msg.text}</div>
+                        <div class="flex items-center gap-1 mt-1 text-xs text-gray-500">
+                            <span>${msg.time}</span>
+                        </div>
+                    </div>
+                    <div class="bubble-tail">
+                        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M24 0 Q0 12 12 24" fill="none" stroke="#222" stroke-width="3"/></svg>
+                    </div>
+                    <button onclick="deleteChatMessage(${i})" title="Hapus Pesan" class="absolute top-1 right-2 text-gray-400 hover:text-red-600 text-lg font-bold bg-white/80 rounded-full px-1 py-0.5 hidden group-hover:block" style="z-index:10;">&times;</button>
+                </div>
+            `).join('');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function deleteChatMessage(idx) {
+            let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '{}');
+            if (!chatHistory[selectedCommunityKey]) return;
+            chatHistory[selectedCommunityKey].splice(idx, 1);
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            renderChatHistory();
+        }
+
+        // Show modal
+        function openCreateCommunityModal() {
+            var modal = document.getElementById('createCommunityModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCreateCommunityModal() {
+            var modal = document.getElementById('createCommunityModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+        // Handle form submit
+        const createForm = document.getElementById('createCommunityForm');
+        if (createForm) {
+            createForm.onsubmit = function (e) {
+                e.preventDefault();
+                const fd = new FormData(createForm);
+                const nama = fd.get('nama');
+                const alamat = fd.get('alamat');
+                const namakomunitas = fd.get('namakomunitas');
+                const campaign = fd.get('campaign').split(',').map(s => s.trim()).filter(Boolean);
+                const deskripsi = fd.get('deskripsi');
+                const logoFile = fd.get('logo');
+                let logoUrl = '';
+                if (logoFile && logoFile.size > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        logoUrl = evt.target.result;
+                        addCommunity();
+                    };
+                    reader.readAsDataURL(logoFile);
+                } else {
+                    logoUrl = 'https://w7.pngwing.com/pngs/370/535/png-transparent-person-thinking-illustration-question-mark-animation-question-text-cartoon-desktop-wallpaper.png'; // default icon
+                    addCommunity();
+                }
+                function addCommunity() {
+                    const key = namakomunitas.replace(/\s+/g, '_') + '_' + Date.now();
+                    communities[key] = {
+                        name: namakomunitas,
+                        description: deskripsi,
+                        events: campaign,
+                        members: [{ name: nama, avatar: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(nama) + '&background=678E34&color=fff&rounded=true&size=48' }],
+                        logo: logoUrl
+                    };
+                    //  logo custom di localStorage agar tetap muncul setelah reload
+                    let customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}');
+                    customLogos[key] = logoUrl;
+                    localStorage.setItem('customLogos', JSON.stringify(customLogos));
+                    closeCreateCommunityModal();
+                    renderCommunityList();
+                    selectCommunity(key);
+                }
+            };
+        }
+        //  tombol create community
+        const createBtn = document.querySelector('button[onclick*="Create Community"]');
+        if (createBtn) {
+            createBtn.setAttribute('onclick', 'openCreateCommunityModal()');
+        }
+        // Inisialisasi sidebar komunitas saat load
+        window.onload = function () {
+            renderCommunityList();
+            // Jika ada komunitas yang sudah join, naik jadi yang pertama/paling atas
+            if (joinedCommunities.length > 0) {
+                selectCommunity(joinedCommunities[0]);
+            }
+        };
+    </script>
+</body>
+
+</html>

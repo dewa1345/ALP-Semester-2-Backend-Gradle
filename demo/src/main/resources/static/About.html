@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECOV</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-green-50 text-gray-800 flex flex-col min-h-screen">
+  <header class="bg-[#678E34] w-full py-3 px-6 shadow-md flex items-center justify-between">
+    <div class="flex items-center gap-3 bg-white rounded-lg px-3 py-1">
+      <button onclick="window.history.back()"
+        class="text-[#678E34] bg-white hover:bg-gray-100 px-3 py-1 rounded font-semibold flex items-center gap-1 border border-[#678E34]">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
+      <img src="logo.png" alt="Logo" class="h-8 w-8 object-contain" />
+    </div>
+    <h1 class="text-white text-xl font-bold flex items-center gap-2">
+      About us ♻️🌱
+    </h1>
+  </header>
+  <!-- Main content (scrollable tapi tanpa scrollbar) -->
+  <main class="flex-grow overflow-y-auto no-scrollbar">
+    <div class="container mx-auto px-4 py-8 flex flex-col gap-8 pb-24">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+        <!-- Deskripsi di kiri -->
+        <section class="lg:w-1/2 space-y-4">
+          <h3 class="text-xl font-bold">Tujuan Dibuatnya Website 🌿</h3>
+          <p>
+            Website ini dikembangkan sebagai media pembelajaran interaktif untuk
+            membantu mahasiswa memahami konsep–konsep pemrograman dan
+            pengembangan web modern. Dengan desain antarmuka yang sederhana
+            namun responsif 🌍, kami berharap setiap pengguna dapat belajar dan
+            berkontribusi dengan mudah.
+          </p>
+          <p>
+            Kami membuat website ini dengan tujuan mengedukasi dan mengajak masyarakat untuk melakukan kebiasaan recycle
+            yang peduli terhadap lingkungan 🌏.
+            Di dalamnya tersedia proyek edukatif, dokumentasi, serta tutorial mengenai teknologi dan gaya hidup
+            berkelanjutan.
+          </p>
+        </section>
+
+        <!-- Gambar di kanan -->
+        <aside class="lg:w-1/2 flex flex-col items-center mt-8 lg:mt-12">
+          <img src="https://i.pinimg.com/736x/77/6c/7d/776c7d29cc6726d01fca154e8441e33b.jpg"
+            class="rounded-2xl shadow-lg w-full h-auto object-cover border-4 border-[#678E34]" />
+          <p class="text-xs text-gray-600 mt-2 italic text-center max-w-xs">Ilustrasi: Edukasi dan kepedulian lingkungan
+            melalui teknologi.</p>
+        </aside>
+      </div>
+
+      <!-- Visi & Misi -->
+      <section class="space-y-4 text-justify">
+        <h2 class="text-xl font-bold">Visi &amp; Misi 🌳</h2>
+        <p>
+          Visi kami adalah menjadi platform terdepan yang menyediakan sumber
+          belajar pemrograman dan gaya hidup ramah lingkungan yang berkualitas tinggi, gratis, dan mudah diakses oleh
+          siapa saja. Kami percaya bahwa pengetahuan dan kepedulian terhadap bumi adalah fondasi masa depan 🌍.
+        </p>
+        <p>
+          Misi kami meliputi:
+        <ul class="list-disc pl-6">
+          <li>Menyediakan konten edukatif yang relevan dan inspiratif 📚</li>
+          <li>Memberikan ruang kolaborasi bagi komunitas pengembang dan pecinta lingkungan 👩‍💻👨‍💻</li>
+          <li>Mengajak masyarakat untuk aktif menerapkan prinsip reduce, reuse, dan recycle ♻️</li>
+          <li>Menghubungkan teknologi dan lingkungan untuk masa depan yang berkelanjutan 🌱</li>
+        </ul>
+        </p>
+      </section>
+
+      <!-- Sejarah Singkat -->
+      <section class="space-y-4 text-justify">
+        <h2 class="text-xl font-bold">Sejarah Singkat 🕰️</h2>
+        <p>
+          Website ini berawal dari proyek kecil sekelompok mahasiswa informatika yang peduli terhadap isu lingkungan.
+          Melihat kurangnya platform edukasi yang menggabungkan teknologi dan kesadaran ekologis, kami mulai membangun
+          website ini sejak tahun 2024 sebagai sarana edukasi dan kampanye digital ramah lingkungan.
+        </p>
+      </section>
+
+      <!-- Profil Tim -->
+      <section class="space-y-4 text-justify">
+        <h2 class="text-xl font-bold">Profil Tim 👥</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center">
+          <!-- Anggota 1 -->
+          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
+            <img src="gerawrr.jpg" alt="Gerawrr"
+              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <div class="text-center">
+              <div class="font-bold">Gerawrr</div>
+              <div class="text-xs text-gray-600">Developer Front-End & UI/UX Designer 🎨</div>
+            </div>
+          </div>
+          <!-- Anggota 2 -->
+          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
+            <img src="Raka_foto.jpg" alt="Rakha"
+              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <div class="text-center">
+              <div class="font-bold">Rakha</div>
+              <div class="text-xs text-gray-600">Developer Front-End & UI/UX Designer 🧠</div>
+            </div>
+          </div>
+          <!-- Anggota 3 -->
+          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
+            <img src="mike.jpg" alt="Mike" class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <div class="text-center">
+              <div class="font-bold">Mike</div>
+              <div class="text-xs text-gray-600">Developer Back-End & Database Engineer 📖</div>
+            </div>
+          </div>
+          <!-- Anggota 4 (Brit) -->
+          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
+            <img src="brit pict.jpg" alt="Brit"
+              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <div class="text-center">
+              <div class="font-bold">Brit</div>
+              <div class="text-xs text-gray-600">Developer Back-End & Database Engineer 💬</div>
+            </div>
+          </div>
+          <!-- Anggota 5 -->
+          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
+            <img src="dew.png" alt="Dew" class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <div class="text-center">
+              <div class="font-bold">Dew</div>
+              <div class="text-xs text-gray-600">Project Coordinator & Public Relations 🦄</div>
+            </div>
+          </div>
+        </div>
+        <p class="text-center mt-4 text-sm text-gray-700">Bersama-sama kami menyatukan keahlian untuk menciptakan
+          platform yang bermanfaat dan ramah lingkungan 🌿.</p>
+      </section>
+
+      <!-- Tujuan -->
+      <section class="space-y-4 text-justify">
+        <h2 class="text-xl font-bold">Tujuan 🎯</h2>
+        <p>
+          Kami ingin membangun sebuah komunitas pembelajar dan penggiat lingkungan melalui platform yang inklusif,
+          modern, dan mudah digunakan.
+          Dengan menyediakan tutorial, proyek praktis, dan informasi penting, kami berharap pengguna dapat memahami
+          pentingnya teknologi dan peran mereka dalam menjaga bumi.
+        </p>
+      </section>
+
+      <!-- Poin Penting -->
+      <section class="space-y-4 text-justify">
+        <h2 class="text-xl font-bold">Poin-Poin Penting yang Membedakan Kami 💡</h2>
+        <ul class="list-disc pl-6">
+          <li>Perpaduan antara edukasi teknologi dan kampanye lingkungan 🌐🌱</li>
+          <li>Konten berbasis proyek nyata untuk pembelajaran praktis 🔧</li>
+          <li>Tampilan antarmuka yang ramah pengguna dan responsif 📱</li>
+          <li>Komunitas terbuka untuk kolaborasi dan pertukaran ide 🤝</li>
+        </ul>
+      </section>
+
+      <!-- Kontak -->
+      <section class="space-y-4 text-justify">
+        <h2 class="text-xl font-bold">Kontak 📬</h2>
+        <p>
+          Jika Anda memiliki pertanyaan, saran, atau ingin berkolaborasi, jangan ragu untuk menghubungi kami melalui:
+        <ul class="list-disc pl-6">
+          <li>Email: <a href="mailto:recycleteam@example.com"
+              class="text-green-600 underline">recycleteam@example.com</a></li>
+          <li>Instagram: <a href="https://instagram.com/recycle_edu" target="_blank"
+              class="text-green-600 underline">@recycle_edu</a></li>
+          <li>WhatsApp: 0812-3456-7890</li>
+        </ul>
+        Kami dengan senang hati menerima masukan dari Anda 😊.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer tetap di dasar viewport -->
+  <footer class="bg-green-100 py-4 fixed bottom-0 left-0 w-full shadow-md">
+    <div class="container mx-auto px-4 text-center text-sm text-gray-600">
+      &copy; 2025 Tim Creator 🌱. All rights reserved.
+    </div>
+  </footer>
+</body>
+
+</html>
