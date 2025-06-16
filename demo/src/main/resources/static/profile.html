@@ -51,7 +51,7 @@
 
     <!-- Kiri -->
     <div class="w-full md:w-[45%] flex flex-col items-center p-4">
-      <img src="Gambar/profile.jpeg" alt="Foto Profil" class="profile-photo w-36 h-36 rounded-full object-cover mb-5" />
+      <img id="profile-photo" src="Gambar/profile.jpeg" alt="Foto Profil" class="profile-photo w-36 h-36 rounded-full object-cover mb-5" />
       <div id="name-container" class="flex items-center gap-2 mb-2">
         <span id="display-name">Nama: </span>
         <input type="text" id="edit-name" class="text-lg font-semibold border rounded px-2 py-1 hidden" />
@@ -130,7 +130,7 @@
     const modal = document.getElementById("camera-modal");
     const video = document.getElementById("camera-feed");
     const verifyBox = document.getElementById("verification-status");
-    const profilePhoto = document.querySelector(".profile-photo");
+    const profilePhoto = document.getElementById("profile-photo");
     const canvas = document.createElement("canvas");
 
 
@@ -162,6 +162,26 @@
       step = 0;
     }
 
+    // Helper to upload photo to backend
+    function uploadPhotoToBackend(imageDataUrl) {
+      const email = localStorage.getItem("username");
+      if (!email) return;
+      fetch(imageDataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const formData = new FormData();
+          formData.append("email", email);
+          formData.append("photo", blob, "photo.png");
+          return fetch("http://localhost:8080/api/users/photo", {
+            method: "PUT",
+            body: formData
+          });
+        })
+        .then(res => res.text())
+        .then(msg => console.log("Upload photo:", msg))
+        .catch(err => console.error("Upload photo error:", err));
+    }
+
     function takePhoto() {
       const context = canvas.getContext("2d");
       canvas.width = video.videoWidth;
@@ -171,6 +191,7 @@
 
       if (step === 1) {
         profilePhoto.src = imageData;
+        uploadPhotoToBackend(imageData);
         photoFaceTaken = true;
         step = 2;
         alert("Langkah 2: Sekarang ambil foto/scan KTP.");
@@ -190,6 +211,7 @@
       reader.onload = function (e) {
         if (step === 1) {
           profilePhoto.src = e.target.result;
+          uploadPhotoToBackend(e.target.result);
           photoFaceTaken = true;
           step = 2;
           alert("Langkah 2: Sekarang ambil foto/scan KTP.");
@@ -263,18 +285,27 @@
             console.error("Gagal mengambil data user:", error);
             document.getElementById("display-name").textContent = "Nama: Tidak ditemukan";
           });
+
+        // Load profile photo from backend if exists
+        fetch(`http://localhost:8080/api/users/photo/${email}`)
+          .then(res => {
+            if (res.ok) return res.blob();
+            throw new Error("No photo");
+          })
+          .then(blob => {
+            if (blob.size > 0) {
+              profilePhoto.src = URL.createObjectURL(blob);
+            }
+          })
+          .catch(() => {
+            // fallback to default
+            profilePhoto.src = "Gambar/profile.jpeg";
+          });
       } else {
         console.warn("Email tidak ditemukan di localStorage");
         document.getElementById("display-name").textContent = "Nama: Tidak diketahui";
       }
     });
-
-
-
-
-
-
-
   </script>
 </body>
 

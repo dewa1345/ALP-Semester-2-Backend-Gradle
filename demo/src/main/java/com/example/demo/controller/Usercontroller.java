@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -69,6 +72,37 @@ public class Usercontroller {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
     }
+
+    // New endpoint for updating user photo (KTP or profile photo)
+    @PutMapping("/photo")
+    public ResponseEntity<?> updatePhoto(
+            @RequestParam("email") String email,
+            @RequestPart("photo") MultipartFile photoFile) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
+        }
+        try {
+            user.setFotoKTP(photoFile.getBytes());
+            userRepository.save(user);
+            return ResponseEntity.ok("Foto berhasil diupdate");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Gagal menyimpan foto");
+        }
+    }
+
+    // Endpoint to get user photo as image
+    @GetMapping("/photo/{email}")
+    public ResponseEntity<?> getPhoto(@PathVariable String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null || user.getFotoKTP() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Foto tidak ditemukan");
+        }
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/png")
+                .body(user.getFotoKTP());
+    }
+
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         User user = userRepository.findByEmail(email);
