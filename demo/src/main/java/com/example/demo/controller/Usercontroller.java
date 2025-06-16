@@ -110,5 +110,16 @@ public class Usercontroller {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
     }
 
+    @PutMapping("/update-name/{email}")
+    public ResponseEntity<?> updateName(@PathVariable String email, @RequestBody Map<String, String> body) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setName(body.get("name"));
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
+    }
+
 
 }

@@ -247,6 +247,7 @@
       const displayName = document.getElementById("display-name");
       const editName = document.getElementById("edit-name");
       const editBtn = document.getElementById("edit-btn");
+      const email = localStorage.getItem("username");
 
       if (editName.classList.contains("hidden")) {
         const currentName = displayName.textContent.replace("Nama: ", "");
@@ -256,11 +257,29 @@
         editBtn.textContent = "✔️";
       } else {
         const newName = editName.value.trim() || "Tanpa Nama";
-        displayName.textContent = "Nama: " + newName;
-        displayName.classList.remove("hidden");
-        editName.classList.add("hidden");
-        editBtn.textContent = "✏️";
-        localStorage.setItem("username", newName);
+
+        // Update name in database
+        fetch(`http://localhost:8080/api/users/update-name/${email}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newName })
+          })
+          .then(response => {
+            if (!response.ok) throw new Error('Gagal update nama');
+            return response.json();
+          })
+          .then(user => {
+            displayName.textContent = "Nama: " + user.name;
+            displayName.classList.remove("hidden");
+            editName.classList.add("hidden");
+            editBtn.textContent = "✏️";
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal mengupdate nama');
+          });
       }
     }
 
