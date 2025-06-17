@@ -128,81 +128,25 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar komunitas -->
             <aside class="lg:w-1/4 w-full">
-                <div class="bg-white rounded-xl shadow p-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
-                        <button
-                            class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
-                            style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span class="hidden sm:inline">Create Community</span>
-                        </button>
-                    </div>
-                    <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
-                        <ul id="communityList" class="space-y-2">
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('Peduli_Mks')"><img
-                                        src="https://lppm.unusa.ac.id/wp-content/uploads/2023/09/Picture1.png"
-                                        alt="Peduli_Mks" class="w-8 h-8 rounded object-cover">Peduli_Mks</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('Recycle.id')"><img
-                                        src="https://morethanstrata.com.au/wp-content/uploads/2023/09/1123213213123.jpg"
-                                        alt="Recycle.id" class="w-8 h-8 rounded object-cover">Recycle.id</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('Clean.id')"><img
-                                        src="
-                                    https://neatclean.com/cdn/shop/articles/Non-Toxic-Cleaning---Neat-Clean_9a290919-5302-4b53-ae29-311e9ec509ab.jpg?v=1742909575"
-                                        alt="Clean.id" class="w-8 h-8 rounded object-cover">Clean.id</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('HijauBersama')"><img src="
-                                    https://dispendik.surabaya.go.id/wp-content/uploads/2015/03/banu-smp-pgri-6.jpg"
-                                        alt="HijauBersama" class="w-8 h-8 rounded object-cover">HijauBersama</button>
-                            </li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('EcoYouth')"><img
-                                        src="
-                                    https://newsroom.toyota.co.id/app/sam/assets/news/9a49149705bf0b8e38690e6ca6d6d5ed.jpeg" alt="EcoYouth"
-                                        class="w-8 h-8 rounded object-cover">EcoYouth</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('ZeroWaste')"><img
-                                        src="
-                                    https://shopequo.com/cdn/shop/articles/Zero-Waste_2bde2b51-61ac-48a6-b1ee-47b02ba2a641.png?v=1701594753&width=1600"
-                                        alt="ZeroWaste" class="w-8 h-8 rounded object-cover">ZeroWaste</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('GreenSteps')"><img
-                                        src="https://loquiz.com/wpmainpage/wp-content/uploads/2022/08/Logo-Green-Steps.png"
-                                        alt="GreenSteps" class="w-8 h-8 rounded object-cover">GreenSteps</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('EcoWarriors')"><img
-                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEC_u8VMK6fgf2lz_mTeHkegN_OegS8egMrQ&s"
-                                        alt="EcoWarriors" class="w-8 h-8 rounded object-cover">EcoWarriors</button></li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('RecycleHeroes')"><img
-                                        src="https://s3-eu-west-1.amazonaws.com/spacehive/bf86e8b5-3ebe-48dc-8268-a4e792d0fb74_xlarge_eco-warrior.jpg"
-                                        alt="RecycleHeroes" class="w-8 h-8 rounded object-cover">RecycleHeroes</button>
-                            </li>
-                            <li><button
-                                    class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100"
-                                    onclick="selectCommunity('SampahBijak')"><img
-                                        src="https://www.kreasa.id/wp-content/uploads/2021/06/kreasa-bijak-kelola-sampah.png"
-                                        alt="SampahBijak" class="w-8 h-8 rounded object-cover">SampahBijak</button></li>
-                        </ul>
-                    </div>
-                </div>
-            </aside>
+    <div class="bg-white rounded-xl shadow p-4">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
+            <button
+                class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
+                style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4v16m8-8H4" />
+                </svg>
+                <span class="hidden sm:inline">Create Community</span>
+            </button>
+        </div>
+        <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
+            <ul id="communityList" class="space-y-2"></ul>
+        </div>
+    </div>
+</aside>
             <!-- Konten komunitas -->
             <main class="flex-1">
                 <div id="communityContent" class="bg-white rounded-xl shadow p-6 min-h-[350px]">
@@ -219,16 +163,12 @@
             <h2 class="text-xl font-bold mb-4 text-[#678E34]">Buat Komunitas Baru</h2>
             <form id="createCommunityForm" class="space-y-3">
                 <div>
-                    <label class="block font-semibold mb-1">Nama Anda</label>
-                    <input type="text" name="nama" class="w-full border rounded px-3 py-2" required>
+                    <label class="block font-semibold mb-1">Nama Komunitas</label>
+                    <input type="text" name="namakomunitas" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Alamat</label>
                     <input type="text" name="alamat" class="w-full border rounded px-3 py-2" required>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Nama Komunitas</label>
-                    <input type="text" name="namakomunitas" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Campaign (pisahkan dengan koma)</label>
@@ -250,157 +190,29 @@
     </div>
 
     <script>
-        // Data komunitas 
-        const communities = {
-            'Peduli_Mks': {
-                name: 'Peduli_Mks',
-                description: 'Komunitas peduli lingkungan Makassar yang fokus pada edukasi dan aksi recycle di masyarakat.',
-                events: [
-                    'Aksi Bersih Pantai Losari (2025)',
-                    'Workshop Daur Ulang Sampah Plastik',
-                    'Kampanye Recycle Goes to School'
-                ],
-                members: [
-                    { name: 'Alya', avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
-                    { name: 'Raka', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-                    { name: 'Bimo', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-                    { name: 'Dewi', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-                    { name: 'Mike', avatar: 'https://randomuser.me/api/portraits/men/41.jpg' },
-                    { name: 'Brita', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' }
-                ]
-            },
-            'Recycle.id': {
-                name: 'Recycle.id',
-                description: 'Platform komunitas nasional untuk berbagi inspirasi dan aksi nyata daur ulang.',
-                events: [
-                    'Webinar Recycle 101',
-                    'Kompetisi Inovasi Daur Ulang',
-                    'Eco Market Day'
-                ],
-                members: [
-                    { name: 'Sinta', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
-                    { name: 'Rizal', avatar: 'https://randomuser.me/api/portraits/men/12.jpg' },
-                    { name: 'Lina', avatar: 'https://randomuser.me/api/portraits/women/22.jpg' },
-                    { name: 'Gerald', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
-                    { name: 'Rakha', avatar: 'https://randomuser.me/api/portraits/men/23.jpg' }
-                ]
-            },
-            'Clean.id': {
-                name: 'Clean.id',
-                description: 'Komunitas yang mengajak masyarakat hidup bersih dan minim sampah.',
-                events: [
-                    'Clean Up Day Nasional',
-                    'Pelatihan Kompos Rumah Tangga',
-                    'Green Talk: Hidup Minim Sampah'
-                ],
-                members: [
-                    { name: 'Dian', avatar: 'https://randomuser.me/api/portraits/women/33.jpg' },
-                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/33.jpg' },
-                    { name: 'Brigita', avatar: 'https://randomuser.me/api/portraits/women/34.jpg' },
-                    { name: 'Aldo', avatar: 'https://randomuser.me/api/portraits/men/34.jpg' }
-                ]
-            },
-            'HijauBersama': {
-                name: 'HijauBersama',
-                description: 'Komunitas kolaborasi antar pelajar dan mahasiswa untuk aksi hijau dan recycle.',
-                events: [
-                    'Penanaman Pohon Bersama',
-                    'Eco Youth Camp',
-                    'Recycling Challenge'
-                ],
-                members: [
-                    { name: 'Bima', avatar: 'https://randomuser.me/api/portraits/men/35.jpg' },
-                    { name: 'Lina', avatar: 'https://randomuser.me/api/portraits/women/35.jpg' },
-                    { name: 'Rafi', avatar: 'https://randomuser.me/api/portraits/men/36.jpg' },
-                    { name: 'Gerry', avatar: 'https://randomuser.me/api/portraits/men/37.jpg' }
-                ]
-            },
-            'EcoYouth': {
-                name: 'EcoYouth',
-                description: 'Komunitas muda-mudi yang aktif mengedukasi pentingnya recycle dan gaya hidup hijau.',
-                events: [
-                    'Eco Youth Festival',
-                    'Kelas Online: Upcycle Barang Bekas',
-                    'Aksi Sosial Lingkungan'
-                ],
-                members: [
-                    { name: 'Aurel', avatar: 'https://randomuser.me/api/portraits/women/36.jpg' },
-                    { name: 'Reno', avatar: 'https://randomuser.me/api/portraits/men/38.jpg' },
-                    { name: 'Bella', avatar: 'https://randomuser.me/api/portraits/women/37.jpg' },
-                    { name: 'Mika', avatar: 'https://randomuser.me/api/portraits/men/39.jpg' }
-                ]
-            },
-            'ZeroWaste': {
-                name: 'ZeroWaste',
-                description: 'Komunitas yang berfokus pada pengurangan sampah dan edukasi zero waste lifestyle.',
-                events: [
-                    'Zero Waste Challenge',
-                    'Workshop Kompos',
-                    'Kampanye Tanpa Plastik'
-                ],
-                members: [
-                    { name: 'Dewi', avatar: 'https://randomuser.me/api/portraits/women/38.jpg' },
-                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/40.jpg' },
-                    { name: 'Brina', avatar: 'https://randomuser.me/api/portraits/women/39.jpg' }
-                ]
-            },
-            'GreenSteps': {
-                name: 'GreenSteps',
-                description: 'Komunitas aksi hijau untuk generasi muda yang peduli lingkungan.',
-                events: [
-                    'Green Steps Marathon',
-                    'Webinar Eco Living',
-                    'Aksi Tanam Pohon'
-                ],
-                members: [
-                    { name: 'Alya', avatar: 'https://randomuser.me/api/portraits/women/40.jpg' },
-                    { name: 'Raka', avatar: 'https://randomuser.me/api/portraits/men/41.jpg' },
-                    { name: 'Gerry', avatar: 'https://randomuser.me/api/portraits/men/42.jpg' }
-                ]
-            },
-            'EcoWarriors': {
-                name: 'EcoWarriors',
-                description: 'Komunitas pejuang lingkungan yang aktif di berbagai kota.',
-                events: [
-                    'Eco Warriors Camp',
-                    'Pelatihan Daur Ulang',
-                    'Aksi Bersih Sungai'
-                ],
-                members: [
-                    { name: 'Brina', avatar: 'https://randomuser.me/api/portraits/women/41.jpg' },
-                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/43.jpg' },
-                    { name: 'Dewi', avatar: 'https://randomuser.me/api/portraits/women/42.jpg' }
-                ]
-            },
-            'RecycleHeroes': {
-                name: 'RecycleHeroes',
-                description: 'Komunitas pahlawan daur ulang yang menginspirasi aksi nyata.',
-                events: [
-                    'Hero Day',
-                    'Lomba Kreasi Barang Bekas',
-                    'Seminar Recycle'
-                ],
-                members: [
-                    { name: 'Raka', avatar: 'https://randomuser.me/api/portraits/men/44.jpg' },
-                    { name: 'Gerry', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-                    { name: 'Lina', avatar: 'https://randomuser.me/api/portraits/women/43.jpg' }
-                ]
-            },
-            'SampahBijak': {
-                name: 'SampahBijak',
-                description: 'Komunitas edukasi dan aksi bijak kelola sampah.',
-                events: [
-                    'Bijak Sampah Festival',
-                    'Pelatihan Bank Sampah',
-                    'Aksi Bersih Kota'
-                ],
-                members: [
-                    { name: 'Aurel', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-                    { name: 'Brina', avatar: 'https://randomuser.me/api/portraits/women/45.jpg' },
-                    { name: 'Miko', avatar: 'https://randomuser.me/api/portraits/men/46.jpg' }
-                ]
-            }
-        };
+        const currentUserId = JSON.parse(localStorage.getItem("ecovUser"))?.id;
+        let communities = {};
+
+        function fetchCommunities() {
+            fetch("/api/communities")
+                .then(res => res.json())
+                .then(data => {
+                    communities = {};
+                    data.forEach(c => {
+                        const key = c.communityName.replace(/\s+/g, '_');
+                        communities[key] = {
+                            id: c.idCommunity,
+                            name: c.communityName,
+                            description: c.description,
+                            events: [],
+                            members: [],
+                            logo: c.logo,
+                            creatorId: c.creator?.user?.id_user // this pulls the user id from nested creator
+                        };
+                    });
+                    renderCommunityList();
+                });
+        }
 
         let selectedCommunityKey = null;
         let joinedCommunities = JSON.parse(localStorage.getItem('joinedCommunities') || '[]');
@@ -496,76 +308,118 @@
         }
 
         function joinCommunity(key) {
-            if (!joinedCommunities.includes(key)) {
-                joinedCommunities.unshift(key);
-                localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
-            }
-            selectCommunity(key);
-            renderCommunityList();
-        }
-
-        function leaveCommunity(key) {
-            joinedCommunities = joinedCommunities.filter(k => k !== key);
-            localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
-            renderCommunityList();
-            selectCommunity(key);
-        }
-
-        //  history chat komunitas di localStorage
-        function sendChat() {
-            const input = document.getElementById('chatInput');
-            const chatBox = document.getElementById('chatBox');
-            if (input && chatBox && input.value.trim() !== '' && selectedCommunityKey) {
-                const c = communities[selectedCommunityKey];
-                const idx = Math.floor(Math.random() * c.members.length);
-                const member = c.members[idx];
-                // Format waktu (jam:menit, 2 digit)
-                const now = new Date();
-                const jam = now.getHours().toString().padStart(2, '0');
-                const menit = now.getMinutes().toString().padStart(2, '0');
-                const waktu = jam + '.' + menit;
-                // Simpan ke localStorage
-                let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '{}');
-                if (!chatHistory[selectedCommunityKey]) chatHistory[selectedCommunityKey] = [];
-                chatHistory[selectedCommunityKey].push({
-                    name: member.name,
-                    avatar: member.avatar,
-                    text: input.value,
-                    time: waktu
-                });
-                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-                renderChatHistory();
-                input.value = '';
-                input.focus();
-            }
-        }
-
-        function renderChatHistory() {
-            const chatBox = document.getElementById('chatBox');
-            if (!chatBox || !selectedCommunityKey) return;
-            let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '{}');
-            const history = chatHistory[selectedCommunityKey] || [];
-            if (history.length === 0) {
-                chatBox.innerHTML = '<div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>';
+            const id = communities[key].id;
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                alert("Anda harus login untuk join komunitas.");
                 return;
             }
-            chatBox.innerHTML = history.map((msg, i) => `
-                <div class="bubble-chat group relative">
-                    <img src="${msg.avatar}" class="bubble-avatar" alt="${msg.name}">
-                    <div class="bubble-content">
-                        <div class="bubble-name">${msg.name}</div>
-                        <div class="bubble-text">${msg.text}</div>
-                        <div class="flex items-center gap-1 mt-1 text-xs text-gray-500">
-                            <span>${msg.time}</span>
+
+            fetch(`/api/communities/${id}/join?userId=${userId}`, { method: "POST" })
+                .then(res => res.text())
+                .then(msg => {
+                alert(msg);
+                if (!joinedCommunities.includes(key)) {
+                    joinedCommunities.unshift(key);
+                    localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
+                }
+                selectCommunity(key);
+                renderCommunityList();
+                });
+            }
+
+
+        function leaveCommunity(key) {
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                alert("Anda harus login untuk keluar dari komunitas.");
+                return;
+            }
+
+            const communityId = communities[key]?.id;
+            if (!communityId) {
+                alert("ID komunitas tidak ditemukan.");
+                return;
+            }
+
+            fetch(`/api/communities/${communityId}/leave?userId=${userId}`, {
+                method: "DELETE"
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.text();
+            })
+            .then(msg => {
+                alert(msg);
+                // Remove from joined list
+                const idx = joinedCommunities.indexOf(key);
+                if (idx !== -1) {
+                    joinedCommunities.splice(idx, 1);
+                    localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
+                }
+                fetchCommunities();
+                renderCommunityList();
+                document.getElementById('communityContent').innerHTML = `<p class="text-gray-500 text-center">Silakan pilih komunitas untuk melihat detailnya.</p>`;
+            })
+            .catch(err => {
+                alert("Error: " + err.message);
+            });
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            if (!input || input.value.trim() === '') return;
+
+            const msg = input.value;
+            const key = selectedCommunityKey;
+            const id = communities[key].id;
+
+            const user = JSON.parse(localStorage.getItem("ecovUser"));
+            if (!user || !user.id) {
+                alert("Anda harus login untuk mengirim pesan.");
+                return;
+            }
+
+            fetch(`/api/communities/${id}/messages?userId=${user.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(msg)
+            })
+                .then(res => res.text())
+                .then(() => {
+                    input.value = '';
+                    fetchMessages();
+                });
+        }
+
+        function fetchMessages() {
+            const key = selectedCommunityKey;
+            const id = communities[key].id;
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = "Loading messages...";
+
+            fetch(`/api/communities/${id}/messages`)
+                .then(res => res.json())
+                .then(messages => {
+                    if (messages.length === 0) {
+                        chatBox.innerHTML = '<div class="text-gray-400 text-sm text-center">Belum ada pesan.</div>';
+                        return;
+                    }
+                    chatBox.innerHTML = messages.map(msg => `
+                        <div class="bubble-chat">
+                            <img src="https://ui-avatars.com/api/?name=User+${msg.idUser}" class="bubble-avatar" />
+                            <div class="bubble-content">
+                                <div class="bubble-name">User ${msg.idUser}</div>
+                                <div class="bubble-text">${msg.communityMsg}</div>
+                                <div class="flex items-center gap-1 mt-1 text-xs text-gray-500">
+                                    <span>${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bubble-tail">
-                        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M24 0 Q0 12 12 24" fill="none" stroke="#222" stroke-width="3"/></svg>
-                    </div>
-                    <button onclick="deleteChatMessage(${i})" title="Hapus Pesan" class="absolute top-1 right-2 text-gray-400 hover:text-red-600 text-lg font-bold bg-white/80 rounded-full px-1 py-0.5 hidden group-hover:block" style="z-index:10;">&times;</button>
-                </div>
-            `).join('');
-            chatBox.scrollTop = chatBox.scrollHeight;
+                    `).join('');
+                });
         }
 
         function deleteChatMessage(idx) {
@@ -592,14 +446,19 @@
         const createForm = document.getElementById('createCommunityForm');
         if (createForm) {
             createForm.onsubmit = function (e) {
-                e.preventDefault();
-                const fd = new FormData(createForm);
-                const nama = fd.get('nama');
-                const alamat = fd.get('alamat');
-                const namakomunitas = fd.get('namakomunitas');
-                const campaign = fd.get('campaign').split(',').map(s => s.trim()).filter(Boolean);
-                const deskripsi = fd.get('deskripsi');
-                const logoFile = fd.get('logo');
+            e.preventDefault();
+            const email = localStorage.getItem('userEmail');
+            if (!email) {
+                alert("You must be logged in to create a community.");
+                return;
+            }
+
+            const fd = new FormData(createForm); // ✅ Add this
+            const communityName = fd.get('namakomunitas');
+            const address = fd.get('alamat');
+            const description = fd.get('deskripsi');
+            const logoFile = fd.get('logo');
+
                 let logoUrl = '';
                 if (logoFile && logoFile.size > 0) {
                     const reader = new FileReader();
@@ -609,25 +468,32 @@
                     };
                     reader.readAsDataURL(logoFile);
                 } else {
-                    logoUrl = 'https://w7.pngwing.com/pngs/370/535/png-transparent-person-thinking-illustration-question-mark-animation-question-text-cartoon-desktop-wallpaper.png'; // default icon
+                    logoUrl = 'https://w7.pngwing.com/pngs/370/535/png-transparent-person-thinking-illustration-question-mark-animation-question-text-cartoon-desktop-wallpaper.png';
                     addCommunity();
                 }
+
                 function addCommunity() {
-                    const key = namakomunitas.replace(/\s+/g, '_') + '_' + Date.now();
-                    communities[key] = {
-                        name: namakomunitas,
-                        description: deskripsi,
-                        events: campaign,
-                        members: [{ name: nama, avatar: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(nama) + '&background=678E34&color=fff&rounded=true&size=48' }],
+                    const payload = {
+                        email: email,                          // ✅ backend now expects email
+                        communityName: communityName,
+                        address: address,
+                        description: description,
                         logo: logoUrl
                     };
-                    //  logo custom di localStorage agar tetap muncul setelah reload
-                    let customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}');
-                    customLogos[key] = logoUrl;
-                    localStorage.setItem('customLogos', JSON.stringify(customLogos));
-                    closeCreateCommunityModal();
-                    renderCommunityList();
-                    selectCommunity(key);
+
+                    fetch("/api/communities", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }).then(res => {
+                        if (!res.ok) throw new Error("Failed to create community");
+                        return res.json();
+                    }).then(() => {
+                        closeCreateCommunityModal();
+                        fetchCommunities();
+                    }).catch(err => {
+                        alert("Error creating community: " + err.message);
+                    });
                 }
             };
         }
@@ -638,13 +504,14 @@
         }
         // Inisialisasi sidebar komunitas saat load
         window.onload = function () {
-            renderCommunityList();
-            // Jika ada komunitas yang sudah join, naik jadi yang pertama/paling atas
+            fetchCommunities();
             if (joinedCommunities.length > 0) {
-                selectCommunity(joinedCommunities[0]);
+                // Delay slightly to ensure communities are fetched
+                setTimeout(() => {
+                    selectCommunity(joinedCommunities[0]);
+                }, 200);
             }
         };
     </script>
 </body>
-
 </html>

@@ -16,11 +16,9 @@
       background-position: center;
       z-index: -1;
     }
-
     .fade-out {
       animation: fadeOut 1.5s forwards;
     }
-
     @keyframes fadeOut {
       from { opacity: 1; }
       to { opacity: 0; transform: scale(1.05); }
@@ -29,7 +27,7 @@
 </head>
 <body>
   <div class="container" id="container">
-    
+
     <!-- Sign Up -->
     <div class="form-container sign-up-container">
       <form id="signup-form">
@@ -56,18 +54,17 @@
     <!-- Sign In -->
     <div class="form-container sign-in-container">
       <form id="login-form" onsubmit="return validateLogin(event)">
-          <h1>Sign In</h1>
-          <input type="email" id="login-name" placeholder="Email" required />
+        <h1>Sign In</h1>
+        <input type="email" id="login-name" placeholder="Email" required />
         <div class="password-container">
           <input type="password" placeholder="Password" id="signin-password" required />
           <span class="eye-icon" onclick="togglePassword('signin-password')">👁️</span>
         </div>
-        
+
         <div style="width: 100%; display: flex; align-items: center; margin-top: 10px; margin-bottom: 15px;">
           <input type="checkbox" id="remember" style="margin-right: 8px; width: 16px; height: 16px;" />
           <label for="remember" style="font-size: 14px; cursor: pointer;">Remember me</label>
         </div>
-
 
         <button type="submit">Login</button>
         <p style="margin-top: 10px;">Don't have an account? <strong>Create my account</strong></p>
@@ -86,7 +83,6 @@
     <!-- Geser Panel -->
     <div class="overlay-container">
       <div class="overlay">
-        <!-- Panel Kiri dengan Background eco1.png -->
         <div class="overlay-panel overlay-left" style="background-image: url('evo1.jpg'); background-size: cover; background-position: center;">
           <div class="overlay-text">
             <h1>Welcome Back!</h1>
@@ -94,8 +90,6 @@
             <button class="ghost" id="signIn">Login</button>
           </div>
         </div>
-
-        <!-- Panel Kanan dengan Background eco2.png -->
         <div class="overlay-panel overlay-right" style="background-image: url('evo2.jpg'); background-size: cover; background-position: center;">
           <div class="overlay-text">
             <h1>Hello, Friend!</h1>
@@ -105,6 +99,8 @@
         </div>
       </div>
     </div>
+  </div>
+
   <!-- Script -->
   <script>
     const signUpButton = document.getElementById('signUp');
@@ -124,80 +120,68 @@
       input.type = input.type === "password" ? "text" : "password";
     }
 
-    // Inside your <script> tag, replace the existing functions with these:
+    function validateLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById('login-name').value.trim();
+      const password = document.getElementById('signin-password').value.trim();
 
-function validateLogin(event) {
-  event.preventDefault();
-  const name = document.getElementById('login-name').value.trim();
-  const password = document.getElementById('signin-password').value.trim();
+      if (name === "" || password === "") {
+        alert("Please fill in all fields.");
+        return false;
+      }
 
-  if (name === "" || password === "") {
-    alert("Please fill in all fields.");
-    return false;
-  }
-
-  fetch("http://localhost:8080/api/users/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email: name, password })
-  })
-  .then(response => {
-    if (!response.ok) {
-      return response.json().then(err => { throw err; });
-    }
-    return response.json();
-  })
-  .then(data => {
-    localStorage.setItem("username", data.email);
-    window.location.href = "homepage.html";
-  })
-  .catch(error => {
-    console.error("Login error:", error);
-    alert(error.message || "Login failed. Please check your credentials.");
-  });
-}
-
-async function handleSignUp() {
-  const name = document.getElementById('signup-name').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const password = document.getElementById('signup-password').value.trim();
-
-  if (name === "" || email === "" || password === "") {
-    alert("Please complete all sign-up fields.");
-    return;
-  }
-
-  try {
-    const response = await fetch('http://localhost:8080/api/users/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        password: password
+      fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: name, password })
       })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Registration failed');
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => { throw err; });
+        }
+        return response.json();
+      })
+      .then(data => {
+        localStorage.setItem("userEmail", data.email);  // ✅ store for backend use
+        localStorage.setItem("userId", data.id_user);    // ✅ optionally store userId
+        window.location.href = "homepage.html";
+      })
+      .catch(error => {
+        console.error("Login error:", error);
+        alert(error.message || "Login failed. Please check your credentials.");
+      });
     }
 
-    const user = await response.json();
-    localStorage.setItem('ecovUser', JSON.stringify({
-      id: user.id,
-      name: user.name,
-      email: user.email
-    }));
-    window.location.href = 'homepage.html';
-  } catch (err) {
-    alert(err.message || 'Failed to connect to server.');
-  }
+    async function handleSignUp() {
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
 
-  
-}
+      if (name === "" || email === "" || password === "") {
+        alert("Please complete all sign-up fields.");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:8080/api/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Registration failed');
+        }
+
+        const user = await response.json();
+        localStorage.setItem('userEmail', user.email);  // ✅ store after signup too
+        localStorage.setItem('userId', user.id_user);
+        window.location.href = 'homepage.html';
+      } catch (err) {
+        alert(err.message || 'Failed to connect to server.');
+      }
+    }
   </script>
 
 </body>
