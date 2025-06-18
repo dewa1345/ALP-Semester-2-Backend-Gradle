@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Campaign Recycle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background-color: #2e944b;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        }
+
+.cartesian-text {
+    margin-left: auto; /* Ini akan mendorong teks ke kanan */
+    padding-left: 20px; /* Jarak dari elemen sebelah kiri */
+}
+
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .participant-count {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .create-campaign-btn {
+            background: white;
+            color: #2e944b;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .create-campaign-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 2;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            position: relative;
+        }
+        
+        .community-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        
+        .community-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid #2e944b;
+        }
+        
+        .community-info h1 {
+            color: #2e944b;
+            margin-bottom: 5px;
+        }
+        
+        .community-info p {
+            color: #666;
+        }
+        
+        .section-title {
+            color: #2e944b;
+            margin: 20px 0 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e0f5e7;
+            padding-bottom: 5px;
+        }
+        
+        .events-list {
+            list-style-type: none;
+        }
+        
+        .events-list li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #2e944b;
+            transition: transform 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .events-list li:hover {
+            transform: translateX(5px);
+            background: #f0f7f1;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            color: #2e944b;
+            margin-bottom: 5px;
+        }
+        
+        .join-btn {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            background: #2e944b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .join-btn:hover {
+            background: #247a3a;
+        }
+        
+        .joined-btn {
+            background: #4CAF50;
+        }
+        
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .member-card {
+            text-align: center;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 8px;
+            border: 2px solid #2e944b;
+        }
+        
+        .member-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* Chat Section Styles */
+        .chat-section {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .chat-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        
+        .received {
+            background: #e0f5e7;
+            align-self: flex-start;
+        }
+        
+        .sent {
+            background: #2e944b;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .chat-input button {
+            background: #2e944b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+        
+        /* Event Detail Modal */
+        .event-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .event-detail-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .event-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        
+        .event-detail-title {
+            color: #2e944b;
+            font-size: 1.5rem;
+        }
+        
+        .event-detail-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .event-detail-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .event-detail-info {
+            margin-bottom: 15px;
+        }
+        
+        .event-detail-label {
+            font-weight: 600;
+            color: #2e944b;
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .event-detail-description {
+            margin-top: 20px;
+            line-height: 1.7;
+        }
+        
+        .event-participants {
+            margin-top: 20px;
+            font-weight: 600;
+            color: #2e944b;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .calendar-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-title {
+            color: #2e944b;
+            font-size: 1.2rem;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav button {
+            background: #e0f5e7;
+            border: none;
+            border-radius: 3px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .calendar-nav button:hover {
+            background: #c8e8d4;
+        }
+        
+        .calendar-month {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            color: #2e944b;
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .calendar-day:hover {
+            background: #e0f5e7;
+        }
+        
+        .current-day {
+            background: #2e944b;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .event-day {
+            position: relative;
+        }
+        
+        .event-day::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background: #e53935;
+            border-radius: 50%;
+        }
+        
+        .upcoming-events {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .upcoming-event {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+            cursor: pointer;
+        }
+        
+        .event-date {
+            background: #2e944b;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .event-date .day {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .event-date .month {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        
+        .event-details {
+            flex-grow: 1;
+        }
+        
+        .event-details h4 {
+            color: #2e944b;
+            margin-bottom: 5px;
+        }
+        
+        .event-details p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Campaign List in Sidebar */
+        .campaign-list-sidebar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .campaign-item-sidebar {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .campaign-item-sidebar:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .campaign-title-sidebar {
+            color: #2e944b;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .campaign-meta-sidebar {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 0.8rem;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .modal-title {
+            color: #2e944b;
+            font-size: 1.3rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .submit-btn {
+            background: #2e944b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            background: #247a3a;
+        }
+        
+        .error-message {
+            color: #e53935;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .members-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="homepage.html" class="back-btn">← Back</a>
+            <span class="cartesian-text">Campaign</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <main class="main-content">
+            <div class="header">
+                <h1 class="section-title" id="mainTitle">Campaign Peduli_Mks</h1>
+                <button class="create-campaign-btn" id="openCreateModal">+ Create Campaign</button>
+            </div>
+            
+            <div class="community-header" id="communityHeader">
+                <img src="logo.png" alt="Peduli_Mks Logo" class="community-logo">
+                <div class="community-info">
+                    <h1 id="communityName">EcoV</h1>
+                    <p id="communityDesc">Campaign peduli lingkungan Makassar yang fokus pada edukasi dan aksi recycle di masyarakat.</p>
+                </div>
+            </div>
+            
+            <h2 class="section-title" id="eventSectionTitle">Event</h2>
+            <ul class="events-list" id="eventsList">
+                <!-- Events will be added dynamically -->
+            </ul>
+            
+            <h2 class="section-title" id="membersTitle">Anggota Campaign</h2>
+            <div class="members-grid" id="membersGrid">
+                <!-- Members will be added dynamically -->
+            </div>
+            
+            <!-- New Chat Section -->
+            <div class="chat-section">
+                <h2 class="section-title" id="chatTitle">Forum Diskusi</h2>
+                <div class="chat-container" id="chatContainer">
+                    <!-- Chat messages will be added dynamically -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Ketik pesan Anda...">
+                    <button id="sendMessageBtn">Kirim</button>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="sidebar">
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <h3 class="calendar-title">Kalender</h3>
+                    <div class="calendar-nav">
+                        <button id="prevMonth">&lt;</button>
+                        <button id="nextMonth">&gt;</button>
+                    </div>
+                </div>
+                <div class="calendar-month" id="monthYearDisplay">Juni 2025</div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be generated dynamically -->
+                </div>
+            </div>
+            
+            <div class="upcoming-events">
+                <h3 class="calendar-title">Event Mendatang</h3>
+                <div id="upcomingEvents">
+                    <!-- Upcoming events will be added dynamically -->
+                </div>
+            </div>
+            
+            <div class="campaign-list-sidebar">
+                <h3 class="calendar-title">Campaign Terbaru</h3>
+                <div id="campaignsList">
+                    <!-- Campaigns will be added dynamically -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Create Campaign Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Buat Campaign Baru</h3>
+                <button class="close-btn" id="closeCreateModal">&times;</button>
+            </div>
+            <form id="campaignForm">
+                <div class="form-group">
+                    <label for="eventName">Nama Event*</label>
+                    <input type="text" id="eventName" required>
+                    <div class="error-message" id="eventNameError">Harap isi nama event</div>
+                </div>
+                <div class="form-group">
+                    <label for="community">Komunitas*</label>
+                    <input type="text" id="community" value="Peduli_Mks" required>
+                    <div class="error-message" id="communityError">Harap isi nama komunitas</div>
+                </div>
+                <div class="form-group">
+                    <label for="location">Lokasi*</label>
+                    <input type="text" id="location" required>
+                    <div class="error-message" id="locationError">Harap isi lokasi</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Tanggal Mulai*</label>
+                        <input type="date" id="startDate" required>
+                        <div class="error-message" id="startDateError">Harap pilih tanggal mulai</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Tanggal Berakhir*</label>
+                        <input type="date" id="endDate" required>
+                        <div class="error-message" id="endDateError">Harap pilih tanggal berakhir</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startTime">Jam Mulai*</label>
+                        <input type="time" id="startTime" required>
+                        <div class="error-message" id="startTimeError">Harap pilih jam mulai</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endTime">Jam Berakhir*</label>
+                        <input type="time" id="endTime" required>
+                        <div class="error-message" id="endTimeError">Harap pilih jam berakhir</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Deskripsi*</label>
+                    <textarea id="description" rows="3" required></textarea>
+                    <div class="error-message" id="descriptionError">Harap isi deskripsi</div>
+                </div>
+                <div class="form-group">
+                    <label for="eventImage">Gambar Event</label>
+                    <input type="file" id="eventImage" accept="image/*">
+                </div>
+                <button type="submit" class="submit-btn">Buat Campaign</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div class="event-detail-modal" id="eventDetailModal">
+        <div class="event-detail-content">
+            <div class="event-detail-header">
+                <h3 class="event-detail-title" id="eventDetailTitle">Detail Event</h3>
+                <button class="event-detail-close" id="closeEventDetail">&times;</button>
+            </div>
+            <img src="" alt="Event Image" class="event-detail-image" id="eventDetailImage">
+            <div class="event-detail-info">
+                <span class="event-detail-label">Komunitas:</span>
+                <span id="eventDetailCommunity"></span>
+            </div>
+            <div class="event-detail-info">
+                <span class="event-detail-label">Lokasi:</span>
+                <span id="eventDetailLocation"></span>
+            </div>
+            <div class="event-detail-info">
+                <span class="event-detail-label">Tanggal:</span>
+                <span id="eventDetailDate"></span>
+            </div>
+            <div class="event-detail-info">
+                <span class="event-detail-label">Waktu:</span>
+                <span id="eventDetailTime"></span>
+            </div>
+            <div class="event-detail-description" id="eventDetailDescription"></div>
+            <div class="event-participants" id="eventDetailParticipants"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sample event data
+        const events = [
+            {
+                id: 1,
+                title: "Aksi Bersih Pantai Losari",
+                community: "Peduli_Mks",
+                location: "Pantai Losari, Makassar",
+                startDate: "2025-06-16",
+                endDate: "2025-06-16",
+                startTime: "08:00",
+                endTime: "12:00",
+                description: "Kegiatan bersih-bersih pantai dan edukasi pengelolaan sampah untuk masyarakat. Kami akan mengumpulkan sampah plastik dan memberikan edukasi tentang pentingnya menjaga kebersihan pantai. Bawa botol minum sendiri untuk mengurangi sampah plastik.",
+                image: "https://via.placeholder.com/600x300?text=Pantai+Losari",
+                participants: 42,
+                joined: false,
+                members: [
+                    { name: "Alya", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
+                    { name: "Raka", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+                    { name: "Bimo", avatar: "https://randomuser.me/api/portraits/men/22.jpg" },
+                    { name: "Dewi", avatar: "https://randomuser.me/api/portraits/women/33.jpg" },
+                    { name: "Mike", avatar: "https://randomuser.me/api/portraits/men/45.jpg" },
+                    { name: "Brita", avatar: "https://randomuser.me/api/portraits/women/55.jpg" }
+                ],
+                chats: [
+                    {
+                        id: 1,
+                        sender: "Alya",
+                        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                        message: "Hai semua! Siapa yang ikut event bersih-bersih pantai besok?",
+                        time: "10:30",
+                        isCurrentUser: false
+                    },
+                    {
+                        id: 2,
+                        sender: "Raka",
+                        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                        message: "Saya ikut! Sudah siapkan sarung tangan dan kantong sampah.",
+                        time: "10:32",
+                        isCurrentUser: false
+                    },
+                    {
+                        id: 3,
+                        sender: "You",
+                        avatar: "",
+                        message: "Saya juga ikut. Jam 8 langsung ke lokasi ya?",
+                        time: "10:35",
+                        isCurrentUser: true
+                    },
+                    {
+                        id: 4,
+                        sender: "Bimo",
+                        avatar: "https://randomuser.me/api/portraits/men/22.jpg",
+                        message: "Iya, kita kumpul di depan anjungan Losari. Jangan lupa bawa air minum sendiri.",
+                        time: "10:38",
+                        isCurrentUser: false
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Workshop Daur Ulang Sampah Plastik",
+                community: "Hijaukan Kota",
+                location: "Ruang Komunitas Peduli_Mks",
+                startDate: "2025-06-18",
+                endDate: "2025-06-25",
+                startTime: "13:00",
+                endTime: "16:00",
+                description: "Pelatihan membuat kerajinan dari sampah plastik untuk mengurangi limbah. Kita akan belajar membuat tas dari kemasan plastik, pot tanaman dari botol plastik, dan hiasan rumah dari tutup botol. Bawa sampah plastik bersih dari rumah untuk didaur ulang.",
+                image: "https://via.placeholder.com/600x300?text=Workshop+Daur+Ulang",
+                participants: 35,
+                joined: false,
+                members: [
+                    { name: "Citra", avatar: "https://randomuser.me/api/portraits/women/12.jpg" },
+                    { name: "Doni", avatar: "https://randomuser.me/api/portraits/men/15.jpg" },
+                    { name: "Eva", avatar: "https://randomuser.me/api/portraits/women/23.jpg" },
+                    { name: "Fajar", avatar: "https://randomuser.me/api/portraits/men/28.jpg" }
+                ],
+                chats: [
+                    {
+                        id: 1,
+                        sender: "Citra",
+                        avatar: "https://randomuser.me/api/portraits/women/12.jpg",
+                        message: "Apa yang perlu kita bawa untuk workshop daur ulang nanti?",
+                        time: "09:15",
+                        isCurrentUser: false
+                    },
+                    {
+                        id: 2,
+                        sender: "Doni",
+                        avatar: "https://randomuser.me/api/portraits/men/15.jpg",
+                        message: "Menurut info, kita perlu bawa sampah plastik bersih dari rumah.",
+                        time: "09:20",
+                        isCurrentUser: false
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Kampanye Recycle Goes to School",
+                community: "Peduli_Mks",
+                location: "SDN 1 Makassar",
+                startDate: "2025-06-22",
+                endDate: "2025-06-22",
+                startTime: "09:00",
+                endTime: "14:00",
+                description: "Program edukasi daur ulang untuk siswa sekolah di Makassar. Kami akan mengajarkan anak-anak cara memilah sampah, pentingnya daur ulang, dan membuat kerajinan sederhana dari bahan bekas. Relawan akan mendapatkan modul pengajaran dan bahan ajar.",
+                image: "https://via.placeholder.com/600x300?text=Recycle+Goes+to+School",
+                participants: 28,
+                joined: false,
+                members: [
+                    { name: "Gina", avatar: "https://randomuser.me/api/portraits/women/31.jpg" },
+                    { name: "Hadi", avatar: "https://randomuser.me/api/portraits/men/42.jpg" },
+                    { name: "Indra", avatar: "https://randomuser.me/api/portraits/men/51.jpg" }
+                ],
+                chats: [
+                    {
+                        id: 1,
+                        sender: "Gina",
+                        avatar: "https://randomuser.me/api/portraits/women/31.jpg",
+                        message: "Saya sudah siapkan materi untuk edukasi anak-anak.",
+                        time: "14:30",
+                        isCurrentUser: false
+                    },
+                    {
+                        id: 2,
+                        sender: "Hadi",
+                        avatar: "https://randomuser.me/api/portraits/men/42.jpg",
+                        message: "Bagus! Saya akan bawa beberapa contoh kerajinan dari barang bekas.",
+                        time: "14:35",
+                        isCurrentUser: false
+                    }
+                ]
+            }
+        ];
+
+        // Sample campaign data
+        const campaigns = [
+            {
+                id: 1,
+                title: "Plastic Free July",
+                description: "Tantangan untuk tidak menggunakan plastik sekali pakai selama bulan Juli.",
+                startDate: "2025-06-15",
+                endDate: "2025-07-31",
+                participants: 42
+            },
+            {
+                id: 2,
+                title: "Bank Sampah Digital",
+                description: "Program pengumpulan sampah yang bisa ditukar dengan poin digital.",
+                startDate: "2025-06-01",
+                endDate: "2025-08-30",
+                participants: 78
+            }
+        ];
+
+        // Calendar variables
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                       "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+        // Current selected event
+        let currentEvent = null;
+
+        // DOM Elements
+        const eventsList = document.getElementById('eventsList');
+        const upcomingEvents = document.getElementById('upcomingEvents');
+        const campaignsList = document.getElementById('campaignsList');
+        const monthYearDisplay = document.getElementById('monthYearDisplay');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const createModal = document.getElementById('createModal');
+        const openCreateModalBtn = document.getElementById('openCreateModal');
+        const closeCreateModalBtn = document.getElementById('closeCreateModal');
+        const campaignForm = document.getElementById('campaignForm');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const eventDetailModal = document.getElementById('eventDetailModal');
+        const closeEventDetailBtn = document.getElementById('closeEventDetail');
+        const eventDetailTitle = document.getElementById('eventDetailTitle');
+        const eventDetailImage = document.getElementById('eventDetailImage');
+        const eventDetailCommunity = document.getElementById('eventDetailCommunity');
+        const eventDetailLocation = document.getElementById('eventDetailLocation');
+        const eventDetailDate = document.getElementById('eventDetailDate');
+        const eventDetailTime = document.getElementById('eventDetailTime');
+        const eventDetailDescription = document.getElementById('eventDetailDescription');
+        const eventDetailParticipants = document.getElementById('eventDetailParticipants');
+        
+        // New elements for dynamic content
+        const mainTitle = document.getElementById('mainTitle');
+        const communityHeader = document.getElementById('communityHeader');
+        const communityName = document.getElementById('communityName');
+        const communityDesc = document.getElementById('communityDesc');
+        const eventSectionTitle = document.getElementById('eventSectionTitle');
+        const membersTitle = document.getElementById('membersTitle');
+        const membersGrid = document.getElementById('membersGrid');
+        const chatTitle = document.getElementById('chatTitle');
+
+        // Initialize the page
+        function init() {
+            renderEvents();
+            renderUpcomingEvents();
+            renderCampaigns();
+            generateCalendar(currentMonth, currentYear);
+            
+            // Event listeners
+            prevMonthBtn.addEventListener('click', () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            nextMonthBtn.addEventListener('click', () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            openCreateModalBtn.addEventListener('click', () => {
+                createModal.style.display = 'flex';
+            });
+            
+            closeCreateModalBtn.addEventListener('click', () => {
+                createModal.style.display = 'none';
+                resetForm();
+            });
+            
+            closeEventDetailBtn.addEventListener('click', () => {
+                eventDetailModal.style.display = 'none';
+            });
+            
+            campaignForm.addEventListener('submit', handleFormSubmit);
+            
+            sendMessageBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === createModal) {
+                    createModal.style.display = 'none';
+                    resetForm();
+                }
+                if (e.target === eventDetailModal) {
+                    eventDetailModal.style.display = 'none';
+                }
+            });
+            
+            // Set default view to first event
+            if (events.length > 0) {
+                selectEvent(events[0]);
+            }
+        }
+
+        // Select an event to display its details
+        function selectEvent(event) {
+            currentEvent = event;
+            
+            // Update main content
+            mainTitle.textContent = event.title;
+            communityName.textContent = event.community;
+            communityDesc.textContent = event.description.substring(0, 100) + "...";
+            eventSectionTitle.textContent = "Detail Event";
+            membersTitle.textContent = "Peserta Event (" + event.members.length + ")";
+            chatTitle.textContent = "Diskusi Event";
+            
+            // Update members grid
+            renderMembers(event.members);
+            
+            // Update chat
+            renderChatMessages(event.chats);
+        }
+
+        // Render members list
+        function renderMembers(members) {
+            membersGrid.innerHTML = '';
+            
+            members.forEach(member => {
+                const memberCard = document.createElement('div');
+                memberCard.className = 'member-card';
+                
+                memberCard.innerHTML = `
+                    <img src="${member.avatar}" alt="${member.name}" class="member-avatar">
+                    <div class="member-name">${member.name}</div>
+                `;
+                
+                membersGrid.appendChild(memberCard);
+            });
+        }
+
+        // Render events list
+        function renderEvents() {
+            eventsList.innerHTML = '';
+            
+            events.forEach(event => {
+                const eventItem = document.createElement('li');
+                eventItem.dataset.id = event.id;
+                
+                const startDate = new Date(event.startDate);
+                const endDate = new Date(event.endDate);
+                const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+                
+                eventItem.innerHTML = `
+                    <div class="event-title">${event.title} (${startDate.toLocaleDateString('id-ID', dateOptions)})</div>
+                    <p>${event.description.substring(0, 100)}...</p>
+                    <button class="join-btn ${event.joined ? 'joined-btn' : ''}">
+                        ${event.joined ? 'Joined' : 'Join'}
+                    </button>
+                `;
+                
+                eventsList.appendChild(eventItem);
+                
+                // Add click event to show details
+                eventItem.addEventListener('click', (e) => {
+                    // Don't trigger if clicking on join button
+                    if (!e.target.classList.contains('join-btn')) {
+                        selectEvent(event);
+                    }
+                });
+            });
+            
+            // Add event listeners to join buttons
+            document.querySelectorAll('.join-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent triggering the parent click event
+                    const eventId = parseInt(this.parentElement.dataset.id);
+                    const event = events.find(e => e.id === eventId);
+                    
+                    if (event) {
+                        event.joined = !event.joined;
+                        if (event.joined) {
+                            event.participants++;  // Ini yang menambah jumlah peserta
+                            this.textContent = 'Joined';
+                            this.classList.add('joined-btn');
+                            alert(`Anda telah bergabung dengan "${event.title}"`);
+                            
+                            // Add current user to members if not already there
+                            const userAlreadyMember = event.members.some(m => m.name === "You");
+                            if (!userAlreadyMember) {
+                                event.members.push({
+                                    name: "You",
+                                    avatar: ""
+                                });
+                            }
+                            
+                            // Add a chat message about joining
+                            const newChatMessage = {
+                                id: event.chats.length + 1,
+                                sender: "You",
+                                avatar: "",
+                                message: `Saya baru saja bergabung dengan event ini! Siapa lagi yang ikut?`,
+                                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                                isCurrentUser: true
+                            };
+                            event.chats.push(newChatMessage);
+                            
+                            // Update UI
+                            if (currentEvent && currentEvent.id === event.id) {
+                                selectEvent(event);
+                            }
+                            renderUpcomingEvents();
+                        } else {
+                            event.participants--;
+                            this.textContent = 'Join';
+                            this.classList.remove('joined-btn');
+                            
+                            // Remove current user from members
+                            event.members = event.members.filter(m => m.name !== "You");
+                            
+                            // Update UI
+                            if (currentEvent && currentEvent.id === event.id) {
+                                selectEvent(event);
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Show event details in modal
+        function showEventDetails(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+            
+            const startDate = new Date(event.startDate);
+            const endDate = new Date(event.endDate);
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            
+            eventDetailTitle.textContent = event.title;
+            eventDetailImage.src = event.image;
+            eventDetailCommunity.textContent = event.community;
+            eventDetailLocation.textContent = event.location;
+            eventDetailDate.textContent = startDate.toLocaleDateString('id-ID', dateOptions);
+            eventDetailTime.textContent = `${event.startTime} - ${event.endTime}`;
+            eventDetailDescription.textContent = event.description;
+            eventDetailParticipants.textContent = `${event.participants} orang telah bergabung`;
+            
+            eventDetailModal.style.display = 'flex';
+        }
+
+        // Render chat messages
+        function renderChatMessages(messages) {
+            chatContainer.innerHTML = '';
+            
+            if (!messages) return;
+            
+            messages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `chat-message ${msg.isCurrentUser ? 'sent' : 'received'}`;
+                
+                if (!msg.isCurrentUser) {
+                    messageElement.innerHTML = `
+                        <div class="message-info">
+                            <strong>${msg.sender}</strong>
+                            <span>${msg.time}</span>
+                        </div>
+                        <div>${msg.message}</div>
+                    `;
+                } else {
+                    messageElement.innerHTML = `
+                        <div class="message-info">
+                            <span>${msg.time}</span>
+                        </div>
+                        <div>${msg.message}</div>
+                    `;
+                }
+                
+                chatContainer.appendChild(messageElement);
+            });
+            
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Send a new chat message
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (messageText === '' || !currentEvent) return;
+            
+            const newMessage = {
+                id: currentEvent.chats.length + 1,
+                sender: "You",
+                avatar: "",
+                message: messageText,
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                isCurrentUser: true
+            };
+            
+            currentEvent.chats.push(newMessage);
+            renderChatMessages(currentEvent.chats);
+            chatInput.value = '';
+            
+            // Simulate a reply after 1-3 seconds
+            setTimeout(() => {
+                const replies = [
+                    "Ide bagus! Saya setuju.",
+                    "Kapan kita bisa bertemu untuk diskusi lebih lanjut?",
+                    "Saya akan cek jadwal dulu ya.",
+                    "Ada yang bisa saya bantu?",
+                    "Terima kasih atas informasinya!"
+                ];
+                
+                const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                const randomMember = currentEvent.members[Math.floor(Math.random() * currentEvent.members.length)];
+                
+                // Don't reply as the current user
+                if (randomMember.name === "You") return;
+                
+                const replyMessage = {
+                    id: currentEvent.chats.length + 1,
+                    sender: randomMember.name,
+                    avatar: randomMember.avatar,
+                    message: randomReply,
+                    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                    isCurrentUser: false
+                };
+                
+                currentEvent.chats.push(replyMessage);
+                renderChatMessages(currentEvent.chats);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // Render upcoming events
+        function renderUpcomingEvents() {
+            upcomingEvents.innerHTML = '';
+            
+            // Sort events by date
+            const sortedEvents = [...events].sort((a, b) => 
+                new Date(a.startDate) - new Date(b.startDate));
+            
+            sortedEvents.forEach(event => {
+                const startDate = new Date(event.startDate);
+                const endDate = new Date(event.endDate);
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", 
+                                  "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+                
+                const eventElement = document.createElement('div');
+                eventElement.className = 'upcoming-event';
+                eventElement.dataset.id = event.id;
+                
+                eventElement.innerHTML = `
+                    <div class="event-date">
+                        <span class="day">${startDate.getDate()}</span>
+                        <span class="month">${monthNames[startDate.getMonth()]}</span>
+                    </div>
+                    <div class="event-details">
+                        <h4>${event.title}</h4>
+                        <p>${event.startTime} - ${event.endTime}</p>
+                        <p>${event.location}</p>
+                        <p>${event.joined ? '✔ Anda telah bergabung' : ''}</p>
+                    </div>
+                `;
+                
+                eventElement.addEventListener('click', () => {
+                    selectEvent(event);
+                });
+                
+                upcomingEvents.appendChild(eventElement);
+            });
+        }
+
+        // Render campaigns
+        function renderCampaigns() {
+            campaignsList.innerHTML = '';
+            
+            campaigns.forEach(campaign => {
+                const startDate = new Date(campaign.startDate);
+                const endDate = new Date(campaign.endDate);
+                const dateOptions = { day: 'numeric', month: 'short' };
+                
+                const campaignElement = document.createElement('div');
+                campaignElement.className = 'campaign-item-sidebar';
+                
+                campaignElement.innerHTML = `
+                    <h4 class="campaign-title-sidebar">${campaign.title}</h4>
+                    <p>${campaign.description}</p>
+                    <div class="campaign-meta-sidebar">
+                        <span>${startDate.toLocaleDateString('id-ID', dateOptions)} - ${endDate.toLocaleDateString('id-ID', dateOptions)}</span>
+                        <span>${campaign.participants} peserta</span> <!-- Ini akan menampilkan jumlah peserta -->
+                    </div>
+                `;
+                
+                campaignsList.appendChild(campaignElement);
+            });
+        }
+
+        // Generate calendar
+        function generateCalendar(month, year) {
+            monthYearDisplay.textContent = `${months[month]} ${year}`;
+            calendarGrid.innerHTML = '';
+            
+            // Create day headers
+            const dayNames = ["M", "S", "S", "R", "K", "J", "S"];
+            dayNames.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day-header';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // Get first day of month and total days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Adjust for Monday as first day (0 -> Monday, 6 -> Sunday)
+            const firstDayIndex = firstDay === 0 ? 6 : firstDay - 1;
+            
+            // Add empty cells for days before first day
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day empty';
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            // Add days of month
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Highlight current day
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayElement.classList.add('current-day');
+                }
+                
+                // Mark days with events
+                const hasEvent = events.some(event => {
+                    const eventDate = new Date(event.startDate);
+                    return eventDate.getDate() === day && 
+                           eventDate.getMonth() === month && 
+                           eventDate.getFullYear() === year;
+                });
+                
+                if (hasEvent) {
+                    dayElement.classList.add('event-day');
+                    
+                    // Add click event to show event details
+                    dayElement.addEventListener('click', () => {
+                        const eventDate = new Date(year, month, day);
+                        const eventOnThisDay = events.find(event => {
+                            const eventStartDate = new Date(event.startDate);
+                            return eventStartDate.toDateString() === eventDate.toDateString();
+                        });
+                        
+                        if (eventOnThisDay) {
+                            selectEvent(eventOnThisDay);
+                        }
+                    });
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            // Validate form
+            let isValid = true;
+            const requiredFields = [
+                'eventName', 'community', 'location', 
+                'startDate', 'endDate', 
+                'startTime', 'endTime', 
+                'description'
+            ];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                const errorElement = document.getElementById(`${fieldId}Error`);
+                
+                if (!field.value) {
+                    errorElement.style.display = 'block';
+                    isValid = false;
+                } else {
+                    errorElement.style.display = 'none';
+                }
+            });
+            
+            if (!isValid) return;
+            
+            // Create new event
+            const newEvent = {
+                id: events.length + 1,
+                title: document.getElementById('eventName').value,
+                community: document.getElementById('community').value,
+                location: document.getElementById('location').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                description: document.getElementById('description').value,
+                image: document.getElementById('eventImage').files[0] ? 
+                      URL.createObjectURL(document.getElementById('eventImage').files[0]) : 
+                      "https://via.placeholder.com/600x300?text=Event",
+                participants: 0,
+                joined: false,
+                members: [],
+                chats: []
+            };
+            
+            events.push(newEvent);
+            
+            // Create new campaign
+            const newCampaign = {
+                id: campaigns.length + 1,
+                title: document.getElementById('eventName').value,
+                description: document.getElementById('description').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                participants: 0
+            };
+            
+            campaigns.push(newCampaign);
+            
+            // Reset form and close modal
+            resetForm();
+            createModal.style.display = 'none';
+            
+            // Update UI
+            renderEvents();
+            renderUpcomingEvents();
+            renderCampaigns();
+            generateCalendar(currentMonth, currentYear);
+            
+            // Select the new event
+            selectEvent(newEvent);
+            
+            // Add announcement to chat
+            const newChatMessage = {
+                id: newEvent.chats.length + 1,
+                sender: "System",
+                avatar: "",
+                message: `Event baru telah dibuat: "${newEvent.title}" pada ${new Date(newEvent.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}. Jangan lupa daftar!`,
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                isCurrentUser: false
+            };
+            newEvent.chats.push(newChatMessage);
+            renderChatMessages(newEvent.chats);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            alert('Campaign berhasil dibuat dan ditambahkan ke Event Mendatang!');
+        }
+
+        // Reset form
+        function resetForm() {
+            campaignForm.reset();
+            document.getElementById('community').value = "Peduli_Mks";
+            
+            // Hide all error messages
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
