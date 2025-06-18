@@ -62,13 +62,13 @@ public class Usercontroller {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateProfile(@RequestBody User updatedUser) {
-        User user = userRepository.findByEmail(updatedUser.getEmail());
-        if (user != null) {
-            user.setName(updatedUser.getName());
+        User userId = userRepository.findByEmail(updatedUser.getEmail());
+        if ( userId != null) {
+            userId.setName(updatedUser.getName());
             if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-                user.setPassword(updatedUser.getPassword());
+                userId.setPassword(updatedUser.getPassword());
             }
-            return ResponseEntity.ok(userRepository.save(user));
+            return ResponseEntity.ok(userRepository.save(userId));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
     }
@@ -76,15 +76,15 @@ public class Usercontroller {
     // New endpoint for updating user photo (KTP or profile photo)
     @PutMapping("/photo")
     public ResponseEntity<?> updatePhoto(
-            @RequestParam("email") String email,
+            @RequestParam("email") String userEmail,
             @RequestPart("photo") MultipartFile photoFile) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        User userId = userRepository.findByEmail(userEmail);
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
         }
         try {
-            user.setFotoKTP(photoFile.getBytes());
-            userRepository.save(user);
+            userId.setFotoKTP(photoFile.getBytes());
+            userRepository.save(userId);
             return ResponseEntity.ok("Foto berhasil diupdate");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Gagal menyimpan foto");
@@ -92,32 +92,51 @@ public class Usercontroller {
     }
 
     // Endpoint to get user photo as image
-    @GetMapping("/photo/{email}")
-    public ResponseEntity<?> getPhoto(@PathVariable String email) {
-        User user = userRepository.findByEmail(email);
-        if (user == null || user.getFotoKTP() == null) {
+    @GetMapping("/photo/{userEmail}")
+    public ResponseEntity<?> getPhoto(@PathVariable String userEmail) {
+        User userId = userRepository.findByEmail(userEmail);
+        if (userId == null || userId.getFotoKTP() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Foto tidak ditemukan");
         }
         return ResponseEntity.ok()
                 .header("Content-Type", "image/png")
-                .body(user.getFotoKTP());
+                .body(userId.getFotoKTP());
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) return ResponseEntity.ok(user);
+    @GetMapping("/email/{userEmail}")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String userEmail) {
+        User userId = userRepository.findByEmail(userEmail);
+        if (userId != null) return ResponseEntity.ok(userId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
     }
 
-    @PutMapping("/update-name/{email}")
-    public ResponseEntity<?> updateName(@PathVariable String email, @RequestBody Map<String, String> body) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            user.setName(body.get("name"));
-            userRepository.save(user);
-            return ResponseEntity.ok(user);
+    @PutMapping("/update-name/{userEmail}")
+    public ResponseEntity<?> updateName(@PathVariable String userEmail, @RequestBody Map<String, String> body) {
+        User userId = userRepository.findByEmail(userEmail);
+        if (userId != null) {
+            userId.setName(body.get("name"));
+            userRepository.save(userId);
+            return ResponseEntity.ok(userId);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
     }
+
+    @GetMapping("/profile/{userEmail}")
+    public ResponseEntity<?> getProfile(@PathVariable String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
+        }
+        
+        Map<String, Object> profile = new HashMap<>();
+        profile.put("id_user", user.getId_user());
+        profile.put("name", user.getName());
+        profile.put("email", user.getEmail());
+        profile.put("hasProfilePhoto", user.getFotoKTP() != null);
+        profile.put("hasKTPPhoto", user.getFotoKTP() != null);
+        
+        return ResponseEntity.ok(profile);
+    }
+
+
 }

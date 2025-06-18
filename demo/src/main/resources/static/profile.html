@@ -164,7 +164,7 @@
 
     // Helper to upload photo to backend
     function uploadPhotoToBackend(imageDataUrl) {
-      const email = localStorage.getItem("username");
+      const email = localStorage.getItem("userEmail");
       if (!email) return;
       fetch(imageDataUrl)
         .then(res => res.blob())
@@ -247,7 +247,7 @@
       const displayName = document.getElementById("display-name");
       const editName = document.getElementById("edit-name");
       const editBtn = document.getElementById("edit-btn");
-      const email = localStorage.getItem("username");
+      const email = localStorage.getItem("userEmail");
 
       if (editName.classList.contains("hidden")) {
         const currentName = displayName.textContent.replace("Nama: ", "");
@@ -284,24 +284,22 @@
     }
 
     window.addEventListener("DOMContentLoaded", function () {
-      const email = localStorage.getItem("username");
+      const email = localStorage.getItem("userEmail");
       console.log("Email dari localStorage:", email); // 👈 DEBUG LOG
 
       if (email) {
-        fetch(`http://localhost:8080/api/users/email/${email}`)
+        fetch(`http://localhost:8080/api/users/profile/${email}`)
           .then(response => {
-            if (!response.ok) {
-              throw new Error("User tidak ditemukan");
-            }
+            if (!response.ok) throw new Error("User tidak ditemukan");
             return response.json();
           })
-          .then(user => {
-            console.log("Data user berhasil diambil:", user); // 👈 DEBUG LOG
-            document.getElementById("display-name").textContent = "Nama: " + user.name;
-            document.getElementById("user-id").textContent = "ID: " + user.id_user;
+          .then(profile => {
+            console.log("Data profil berhasil diambil:", profile);
+            document.getElementById("display-name").textContent = "Nama: " + profile.name;
+            document.getElementById("user-id").textContent = "ID: " + profile.id_user;
           })
           .catch(error => {
-            console.error("Gagal mengambil data user:", error);
+            console.error("Gagal mengambil data profil:", error);
             document.getElementById("display-name").textContent = "Nama: Tidak ditemukan";
           });
 
