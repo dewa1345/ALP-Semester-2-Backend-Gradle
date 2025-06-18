@@ -171,11 +171,6 @@
                     <input type="text" name="alamat" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">Campaign (pisahkan dengan koma)</label>
-                    <input type="text" name="campaign" class="w-full border rounded px-3 py-2"
-                        placeholder="Contoh: Bersih Sungai, Edukasi Sampah" required>
-                </div>
-                <div>
                     <label class="block font-semibold mb-1">Deskripsi Komunitas</label>
                     <textarea name="deskripsi" class="w-full border rounded px-3 py-2" required></textarea>
                 </div>
@@ -211,9 +206,9 @@
                         description: c.description,
                         address: c.address,
                         members: c.members,
-                        logo: c.logo,
+                        logoUrl: c.logoUrl || null,  // ✅ use backend-provided URL
                         creatorId: c.creatorId
-                    };
+                        };
                 });
                 renderCommunityList();
             });
@@ -245,7 +240,8 @@
 
         console.log("Rendering:", c.name, "creatorId:", c.creatorId, "currentUserId:", currentUserId);
 
-        const imgUrl = customLogos[key] || c.logo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        const defaultLogo = "gambar/community-default.jpg";
+        const imgUrl = customLogos[key] || c.logoUrl || defaultLogo;
 
         return `
             <li>
@@ -399,14 +395,132 @@
         // Placeholder
     }
 
-    window.onload = function () {
-        fetchCommunities();
-        if (joinedCommunities.length > 0) {
-            setTimeout(() => {
-                selectCommunity(joinedCommunities[0]);
-            }, 200);
-        }
-    };
+    function openCreateCommunityModal() {
+        const modal = document.getElementById('createCommunityModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeCreateCommunityModal() {
+        const modal = document.getElementById('createCommunityModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
+    const createForm = document.getElementById('createCommunityForm');
+    if (createForm) {
+        createForm.onsubmit = function (e) {
+            e.preventDefault();
+
+            const email = localStorage.getItem("userEmail");
+            if (!email) {
+                alert("You must be logged in to create a community.");
+                return;
+            }
+
+            const fd = new FormData(createForm);
+            const communityName = fd.get('namakomunitas');
+            const address = fd.get('alamat');
+            const description = fd.get('deskripsi');
+            const logoFile = fd.get('logo');
+
+            // Read image (if any), then create community
+            if (logoFile && logoFile.size > 0) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    const imageDataUrl = evt.target.result;
+                    submitCommunity(null, logoFile, imageDataUrl);
+                };
+                reader.readAsDataURL(logoFile);
+            } else {
+                submitCommunity(null, null, null);
+            }
+
+            function submitCommunity(logoUrl, rawFile, imageDataUrl) {
+                const payload = {
+                    email: email,
+                    communityName: communityName,
+                    address: address,
+                    description: description
+                    // no logo included here anymore!
+                };
+
+                fetch("/api/communities", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to create community");
+                    return res.json();
+                })
+                .then(savedCommunity => {
+                    closeCreateCommunityModal();
+
+                    // Upload logo separately using FormData
+                    if (rawFile && imageDataUrl && savedCommunity?.idCommunity) {
+                        uploadCommunityLogoToBackend(imageDataUrl, savedCommunity.idCommunity);
+                    }
+
+                    fetchCommunities(); // Refresh sidebar
+                })
+                .catch(err => {
+                    alert("Error creating community: " + err.message);
+                });
+            }
+        };
+    }
+
+// Used after community is created to upload image
+    function uploadCommunityLogoToBackend(imageDataUrl, communityId) {
+        if (!communityId) return;
+
+        fetch(imageDataUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const formData = new FormData();
+                formData.append("communityId", communityId);
+                formData.append("photo", blob, "logo.png");
+
+                return fetch("http://localhost:8080/api/communities/photo", {
+                    method: "PUT",
+                    body: formData
+                });
+            })
+            .then(res => res.text())
+            .then(msg => console.log("Community logo uploaded:", msg))
+            .catch(err => console.error("Community logo upload error:", err));
+    }
+
+
+        function uploadCommunityLogoToBackend(imageDataUrl, communityId) {
+        if (!communityId) return;
+
+        fetch(imageDataUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const formData = new FormData();
+                formData.append("communityId", communityId);
+                formData.append("photo", blob, "logo.png");
+
+                return fetch("http://localhost:8080/api/communities/photo", {
+                    method: "PUT",
+                    body: formData
+                });
+            })
+            .then(res => res.text())
+            .then(msg => console.log("Community logo uploaded:", msg))
+            .catch(err => console.error("Community logo upload error:", err));
+    }
+
+        window.onload = function () {
+            fetchCommunities();
+            if (joinedCommunities.length > 0) {
+                setTimeout(() => {
+                    selectCommunity(joinedCommunities[0]);
+                }, 200);
+            }
+        };
 </script>
 
 </body>

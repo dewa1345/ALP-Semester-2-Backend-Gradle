@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/communities")
@@ -25,28 +28,31 @@ public class CommunityController {
     private final UserRepository userRepository;
 
     @GetMapping
-public List<Map<String, Object>> getAllCommunities() {
-    List<Community> communities = communityRepository.findAll();
+    public List<Map<String, Object>> getAllCommunities() {
+        List<Community> communities = communityRepository.findAll();
 
-    return communities.stream().map(c -> {
-        Map<String, Object> map = new java.util.HashMap<>();
-        map.put("idCommunity", c.getIdCommunity());
-        map.put("communityName", c.getCommunityName());
-        map.put("description", c.getDescription());
-        map.put("address", c.getAddress());
-        map.put("logo", c.getLogo());
-        map.put("members", c.getMembers());
+        return communities.stream().map(c -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("idCommunity", c.getIdCommunity());
+            map.put("communityName", c.getCommunityName());
+            map.put("description", c.getDescription());
+            map.put("address", c.getAddress());
+            map.put("members", c.getMembers());
 
-        // Get creator.user.id_user
-        Creator creator = c.getCreator();
-        Long creatorId = (creator != null && creator.getUser() != null) ? creator.getUser().getId_user() : null;
-        map.put("creatorId", creatorId);
+            // Serve logo as preview URL if available
+            if (c.getLogo() != null) {
+                map.put("logoUrl", "/api/communities/photo/" + c.getIdCommunity());
+            } else {
+                map.put("logoUrl", null);
+            }
 
-        return map;
-    }).toList();
-}
+            Creator creator = c.getCreator();
+            Long creatorId = (creator != null && creator.getUser() != null) ? creator.getUser().getId_user() : null;
+            map.put("creatorId", creatorId);
 
-
+            return map;
+        }).toList();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Community> getCommunity(@PathVariable Long id) {
@@ -60,45 +66,79 @@ public List<Map<String, Object>> getAllCommunities() {
         String email = (String) requestData.get("email");
         String name = (String) requestData.get("communityName");
         String description = (String) requestData.get("description");
-        String logo = (String) requestData.get("logo");
         String address = (String) requestData.get("address");
 
-        if (communityRepository.findAll().stream().anyMatch(c -> c.getCommunityName().equalsIgnoreCase(name))) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Community name already exists");
+        try {
+            if (communityRepository.findAll().stream().anyMatch(c -> c.getCommunityName().equalsIgnoreCase(name))) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Community name already exists");
+            }
+
+            User user = userRepository.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            Creator creator = new Creator();
+            creator.setUser(user);
+            creatorRepository.save(creator);
+
+            Community community = new Community();
+            community.setCommunityName(name);
+            community.setDescription(description);
+            community.setAddress(address);
+            community.setMembers(1);
+            community.setCreator(creator);
+            Community savedCommunity = communityRepository.save(community);
+
+            creator.setCommunity(savedCommunity);
+            creatorRepository.save(creator);
+
+            CommunityUserId id = new CommunityUserId();
+            id.setUser(user.getId_user());
+            id.setCommunity(savedCommunity.getIdCommunity());
+
+            CommunityUser cu = new CommunityUser();
+            cu.setId(id);
+            cu.setUser(user);
+            cu.setCommunity(savedCommunity);
+            communityUserRepository.save(cu);
+
+            return ResponseEntity.ok(savedCommunity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Community creation failed: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/photo")
+    public ResponseEntity<?> uploadCommunityLogo(
+            @RequestParam("communityId") Long communityId,
+            @RequestPart("photo") MultipartFile photoFile) {
+        Optional<Community> opt = communityRepository.findById(communityId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
         }
 
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        try {
+            Community community = opt.get();
+            byte[] imageBytes = photoFile.getBytes();
+            community.setLogo(imageBytes);  // store as byte[]
+            communityRepository.save(community);
+            return ResponseEntity.ok("Logo uploaded successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed");
         }
+    }
 
-        Creator creator = new Creator();
-        creator.setUser(user);
-        creatorRepository.save(creator);
-
-        Community community = new Community();
-        community.setCommunityName(name);
-        community.setDescription(description);
-        community.setLogo(logo);
-        community.setAddress(address);
-        community.setMembers(1);
-        community.setCreator(creator);
-        Community savedCommunity = communityRepository.save(community);
-
-        creator.setCommunity(savedCommunity);
-        creatorRepository.save(creator);
-
-        CommunityUserId id = new CommunityUserId();
-        id.setUser(user.getId_user());
-        id.setCommunity(savedCommunity.getIdCommunity());
-
-        CommunityUser cu = new CommunityUser();
-        cu.setId(id);
-        cu.setUser(user);
-        cu.setCommunity(savedCommunity);
-        communityUserRepository.save(cu);
-
-        return ResponseEntity.ok(savedCommunity);
+    @GetMapping("/photo/{id}")
+    public ResponseEntity<byte[]> getCommunityLogo(@PathVariable Long id) {
+        Optional<Community> opt = communityRepository.findById(id);
+        if (opt.isEmpty() || opt.get().getLogo() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/png")
+                .body(opt.get().getLogo());
     }
 
     @PostMapping("/{id}/join")

@@ -120,6 +120,4 @@ public class Usercontroller {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
     }
-
-
 }
