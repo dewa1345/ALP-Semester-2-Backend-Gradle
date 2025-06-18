@@ -20,7 +20,7 @@ public class Community {
     @JsonBackReference
     private Creator creator;
 
-    private String address;
+    private String location;
     private String description;
     private int members;
     @Lob

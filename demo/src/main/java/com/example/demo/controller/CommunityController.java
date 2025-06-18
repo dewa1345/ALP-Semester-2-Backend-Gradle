@@ -36,7 +36,7 @@ public class CommunityController {
             map.put("idCommunity", c.getIdCommunity());
             map.put("communityName", c.getCommunityName());
             map.put("description", c.getDescription());
-            map.put("address", c.getAddress());
+            map.put("Location", c.getLocation());
             map.put("members", c.getMembers());
 
             // Serve logo as preview URL if available
@@ -66,7 +66,7 @@ public class CommunityController {
         String email = (String) requestData.get("email");
         String name = (String) requestData.get("communityName");
         String description = (String) requestData.get("description");
-        String address = (String) requestData.get("address");
+        String Location = (String) requestData.get("Location");
 
         try {
             if (communityRepository.findAll().stream().anyMatch(c -> c.getCommunityName().equalsIgnoreCase(name))) {
@@ -85,7 +85,7 @@ public class CommunityController {
             Community community = new Community();
             community.setCommunityName(name);
             community.setDescription(description);
-            community.setAddress(address);
+            community.setLocation(Location);
             community.setMembers(1);
             community.setCreator(creator);
             Community savedCommunity = communityRepository.save(community);

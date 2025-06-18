@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 
-<head>
-    <meta charset="UTF-8" />
+<meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Recycle Communities Forum</title>
+    <title> EcoV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .bubble-chat {
@@ -84,7 +83,7 @@
 
         .modal-content {
             background-color: #f6fdf4;
-            margin: auto;
+            margin: 60px auto auto auto;
             padding: 24px 18px;
             border: 1.5px solid #b5d6a2;
             width: 95%;
@@ -106,10 +105,84 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* NAVBAR STYLES */
+        .navbar {
+            width: 100vw;
+            height: 60px;
+            background: #2e944b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(46, 148, 75, 0.08);
+        }
+
+        .navbar button {
+            margin-left: 24px;
+            background: #fff;
+            color: #2e944b;
+            border: 2px solid #2e944b;
+            border-radius: 8px;
+            padding: 8px 22px 8px 14px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(46, 148, 75, 0.07);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .navbar span {
+            margin-right: 32px;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .navbar-blur {
+            background: rgba(34, 34, 34, 0.7) !important;
+            box-shadow: 0 2px 8px rgba(34, 34, 34, 0.15);
+            backdrop-filter: blur(2px);
+            transition: background 0.2s;
+        }
+
+        .navbar-transparent {
+            background: transparent !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            transition: background 0.2s;
+        }
+
+        .navbar-behind-modal {
+            z-index: 1 !important;
+        }
+
+        /* Extra space for fixed navbar */
+        .navbar-spacer {
+            height: 70px;
+        }
     </style>
 </head>
-
 <body class="bg-green-50 min-h-screen text-gray-800">
+    <!-- NAVBAR ATAS -->
+    <nav class="navbar">
+        <button onclick="window.history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22"
+                height="22">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            BACK
+        </button>
+        <span>Community</span>
+    </nav>
+    <div class="navbar-spacer"></div>
     <div class="container mx-auto py-8 px-4">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3 bg-white rounded-lg px-3 py-1">
@@ -128,25 +201,25 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar komunitas -->
             <aside class="lg:w-1/4 w-full">
-    <div class="bg-white rounded-xl shadow p-4">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
-            <button
-                class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
-                style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4v16m8-8H4" />
-                </svg>
-                <span class="hidden sm:inline">Create Community</span>
-            </button>
-        </div>
-        <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
-            <ul id="communityList" class="space-y-2"></ul>
-        </div>
-    </div>
-</aside>
+                <div class="bg-white rounded-xl shadow p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
+                        <button
+                            class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
+                            style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span class="hidden sm:inline">Create Community</span>
+                        </button>
+                    </div>
+                    <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
+                        <ul id="communityList" class="space-y-2"></ul>
+                    </div>
+                </div>
+            </aside>
             <!-- Konten komunitas -->
             <main class="flex-1">
                 <div id="communityContent" class="bg-white rounded-xl shadow p-6 min-h-[350px]">
@@ -167,8 +240,8 @@
                     <input type="text" name="namakomunitas" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">Alamat</label>
-                    <input type="text" name="alamat" class="w-full border rounded px-3 py-2" required>
+                    <label class="block font-semibold mb-1">Lokasi</label>
+                    <input type="text" name="Lokasi" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Deskripsi Komunitas</label>
@@ -204,7 +277,7 @@
                         id: c.idCommunity,
                         name: c.communityName,
                         description: c.description,
-                        address: c.address,
+                        location: c.location,
                         members: c.members,
                         logoUrl: c.logoUrl || null,  // ✅ use backend-provided URL
                         creatorId: c.creatorId
@@ -215,50 +288,49 @@
     }
 
     function renderCommunityList() {
-    const list = document.getElementById('communityList');
-    if (!list) return;
+        const list = document.getElementById('communityList');
+        if (!list) return;
 
-    const currentUserId = parseInt(localStorage.getItem("userId")) || null;
-    console.log("Logged-in currentUserId:", currentUserId);
+        const currentUserId = parseInt(localStorage.getItem("userId")) || null;
+        console.log("Logged-in currentUserId:", currentUserId);
 
-    const keys = Object.keys(communities);
+        const keys = Object.keys(communities);
 
-    // Group communities
-    const creatorKeys = keys.filter(k => communities[k].creatorId == currentUserId);
-    const joinedKeys = keys.filter(k => !creatorKeys.includes(k) && joinedCommunities.includes(k));
-    const otherKeys = keys.filter(k => !creatorKeys.includes(k) && !joinedCommunities.includes(k));
+        // Group communities
+        const creatorKeys = keys.filter(k => communities[k].creatorId == currentUserId);
+        const joinedKeys = keys.filter(k => !creatorKeys.includes(k) && joinedCommunities.includes(k));
+        const otherKeys = keys.filter(k => !creatorKeys.includes(k) && !joinedCommunities.includes(k));
 
-    const orderedKeys = [...creatorKeys, ...joinedKeys, ...otherKeys];
+        const orderedKeys = [...creatorKeys, ...joinedKeys, ...otherKeys];
 
-    let customLogos = {};
-    try { customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}'); } catch {}
+        let customLogos = {};
+        try { customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}'); } catch {}
 
-    list.innerHTML = orderedKeys.map(key => {
-        const c = communities[key];
-        const joined = joinedCommunities.includes(key);
-        const isCreator = c.creatorId == currentUserId;
+        list.innerHTML = orderedKeys.map(key => {
+            const c = communities[key];
+            const joined = joinedCommunities.includes(key);
+            const isCreator = c.creatorId == currentUserId;
 
-        console.log("Rendering:", c.name, "creatorId:", c.creatorId, "currentUserId:", currentUserId);
+            console.log("Rendering:", c.name, "creatorId:", c.creatorId, "currentUserId:", currentUserId);
 
-        const defaultLogo = "gambar/community-default.jpg";
-        const imgUrl = customLogos[key] || c.logoUrl || defaultLogo;
+            const defaultLogo = "gambar/community-default.jpg";
+            const imgUrl = customLogos[key] || c.logoUrl || defaultLogo;
 
-        return `
-            <li>
-                <button class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100 relative" onclick="selectCommunity('${key}')">
-                    <img src="${imgUrl}" alt="${c.name}" class="w-8 h-8 rounded object-cover">
-                    ${c.name}
-                    ${
-                      isCreator
-                        ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs">Creator</span>'
-                        : (joined ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-[#678E34] text-white text-xs">Joined</span>' : '')
-                    }
-                </button>
-            </li>
-        `;
-    }).join('');
-}
-
+            return `
+                <li>
+                    <button class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100 relative" onclick="selectCommunity('${key}')">
+                        <img src="${imgUrl}" alt="${c.name}" class="w-8 h-8 rounded object-cover">
+                        ${c.name}
+                        ${
+                        isCreator
+                            ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs">Creator</span>'
+                            : (joined ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-[#678E34] text-white text-xs">Joined</span>' : '')
+                        }
+                    </button>
+                </li>
+            `;
+        }).join('');
+    }
 
     function selectCommunity(key) {
         const c = communities[key];
@@ -399,12 +471,22 @@
         const modal = document.getElementById('createCommunityModal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.add('navbar-behind-modal');
+        }
     }
 
     function closeCreateCommunityModal() {
         const modal = document.getElementById('createCommunityModal');
         modal.classList.remove('flex');
         modal.classList.add('hidden');
+
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-behind-modal');
+        }
     }
 
     const createForm = document.getElementById('createCommunityForm');
@@ -420,7 +502,7 @@
 
             const fd = new FormData(createForm);
             const communityName = fd.get('namakomunitas');
-            const address = fd.get('alamat');
+            const location = fd.get('Lokasi');
             const description = fd.get('deskripsi');
             const logoFile = fd.get('logo');
 
@@ -440,7 +522,7 @@
                 const payload = {
                     email: email,
                     communityName: communityName,
-                    address: address,
+                    location: location,
                     description: description
                     // no logo included here anymore!
                 };
@@ -492,7 +574,6 @@
             .catch(err => console.error("Community logo upload error:", err));
     }
 
-
         function uploadCommunityLogoToBackend(imageDataUrl, communityId) {
         if (!communityId) return;
 
@@ -521,7 +602,11 @@
                 }, 200);
             }
         };
-</script>
-
+    </script>
+    <footer class="bg-green-100 py-4 fixed bottom-0 left-0 w-full shadow-md">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-600">
+            &copy; 2025 Tim Creator 🌱. All rights reserved.
+        </div>
+    </footer>
 </body>
 </html>
