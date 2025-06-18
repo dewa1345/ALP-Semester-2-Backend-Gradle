@@ -11,10 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,7 +31,7 @@ public class CommunityController {
         List<Community> communities = communityRepository.findAll();
 
         return communities.stream().map(c -> {
-            Map<String, Object> map = new java.util.HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("idCommunity", c.getIdCommunity());
             map.put("communityName", c.getCommunityName());
             map.put("description", c.getDescription());
@@ -54,6 +51,33 @@ public class CommunityController {
 
             return map;
         }).toList();
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Map<String, Object>> getUserCommunities(@PathVariable Long userId) {
+        List<CommunityUser> communityUsers = communityUserRepository.findByIdUser(userId);
+
+        return communityUsers.stream().map(cu -> {
+            Community community = cu.getCommunity();
+            Map<String, Object> map = new HashMap<>();
+            map.put("idCommunity", community.getIdCommunity());
+            map.put("communityName", community.getCommunityName());
+            map.put("description", community.getDescription());
+            map.put("Location", community.getLocation());
+            map.put("members", community.getMembers());
+
+            if (community.getLogo() != null) {
+                map.put("logoUrl", "/api/communities/photo/" + community.getIdCommunity());
+            } else {
+                map.put("logoUrl", null);
+            }
+
+            Creator creator = community.getCreator();
+            Long creatorId = (creator != null && creator.getUser() != null) ? creator.getUser().getId_user() : null;
+            map.put("creatorId", creatorId);
+
+            return map;
+        }).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -124,7 +148,7 @@ public class CommunityController {
         try {
             Community community = opt.get();
             byte[] imageBytes = photoFile.getBytes();
-            community.setLogo(imageBytes);  // store as byte[]
+            community.setLogo(imageBytes);
             communityRepository.save(community);
             return ResponseEntity.ok("Logo uploaded successfully");
         } catch (IOException e) {
@@ -199,6 +223,8 @@ public class CommunityController {
             return ResponseEntity.badRequest().body("Invalid user or community ID");
         }
 
+        message = message.replaceAll("^\"|\"$", "");
+
         CommunityMsg msg = new CommunityMsg();
         msg.setCommunity(community);
         msg.setUser(user);
@@ -213,7 +239,11 @@ public class CommunityController {
     public ResponseEntity<List<CommunityMsg>> getMessages(@PathVariable Long id) {
         Community community = communityRepository.findById(id).orElse(null);
         if (community == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(communityMsgRepository.findByCommunity(community));
+
+        List<CommunityMsg> messages = communityMsgRepository.findByCommunity(community);
+        messages.sort(Comparator.comparing(CommunityMsg::getTimestamp));
+
+        return ResponseEntity.ok(messages);
     }
 
     @GetMapping("/{id}/members")

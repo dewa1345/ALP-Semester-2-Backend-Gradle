@@ -254,6 +254,7 @@
     let communities = {};
     let selectedCommunityKey = null;
     let joinedCommunities = JSON.parse(localStorage.getItem('joinedCommunities') || '[]');
+    let chatRefreshTimer = null; // Timer for chat refresh
 
     function fetchCommunities() {
         fetch("/api/communities")
@@ -266,9 +267,10 @@
                         id: c.idCommunity,
                         name: c.communityName,
                         description: c.description,
-                        location: c.location,
+                        // Fix: use c.Location or c.location
+                        location: c.Location || c.location || "",
                         members: c.members,
-                        logoUrl: c.logoUrl || null,  // ✅ use backend-provided URL
+                        logoUrl: c.logoUrl || null,
                         creatorId: c.creatorId
                         };
                 });
@@ -352,7 +354,7 @@
             <div class="mb-20">
                 <h3 class="font-semibold text-lg mb-2">Chat Komunitas</h3>
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 h-40 overflow-y-auto mb-2" id="chatBox">
-                    <div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>
+                    <!-- chat messages will be rendered here -->
                 </div>
                 <div class="flex gap-2">
                     <input id="chatInput" type="text" class="flex-1 border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#678E34]" placeholder="Ketik pesan...">
@@ -361,7 +363,7 @@
             </div>
             ${
                 c.creatorId == currentUserId
-                    ? '' // Don't show Leave/Join button to the creator
+                    ? ''
                     : (
                         joinedCommunities.includes(key)
                             ? `<button onclick="leaveCommunity('${key}')" id="leaveBtn" class="fixed bottom-8 right-8 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-800 z-50">Leave Komunitas</button>`
@@ -379,9 +381,17 @@
                     }
                 });
             }
-            renderChatHistory();
+            // Clear previous chat refresh timer if any
+            if (chatRefreshTimer) {
+                clearTimeout(chatRefreshTimer);
+                chatRefreshTimer = null;
+            }
+            // Always call renderChatHistory after rendering chat box
+            if (typeof window.renderChatHistory === "function") {
+                window.renderChatHistory();
+            }
         }, 100);
-    }
+    } // <-- Fix: add missing closing bracket here
 
     function joinCommunity(key) {
         const id = communities[key].id;
@@ -463,13 +473,85 @@
             .then(res => res.text())
             .then(() => {
                 input.value = '';
-                fetchMessages();
+                // Clear previous chat refresh timer if any
+                if (chatRefreshTimer) {
+                    clearTimeout(chatRefreshTimer);
+                    chatRefreshTimer = null;
+                }
+                // Always call renderChatHistory after sending a message
+                if (typeof window.renderChatHistory === "function") {
+                    window.renderChatHistory();
+                }
             });
     }
 
     function renderChatHistory() {
-        // Placeholder
+        const key = selectedCommunityKey;
+        if (!key || !communities[key]) return;
+
+        const communityId = communities[key].id;
+
+        fetch(`/api/communities/${communityId}/messages`)
+            .then(res => res.json())
+            .then(messages => {
+                const chatBox = document.getElementById('chatBox');
+                if (!chatBox) return;
+
+                // Always clear chatBox before rendering
+                chatBox.innerHTML = '';
+
+                if (!Array.isArray(messages) || messages.length === 0) {
+                    chatBox.innerHTML = `<div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>`;
+                    return;
+                }
+
+                // Sort messages by timestamp
+                messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                chatBox.innerHTML = messages.map(msg => {
+                    // Defensive: check if msg.user exists
+                    if (!msg.user) return '';
+                    const isSender = msg.user.id_user === currentUserId;
+                    const bubbleAlign = isSender ? 'justify-end' : 'justify-start';
+                    const bubbleColor = isSender ? 'bg-green-100 border-green-300' : 'bg-white border-gray-300';
+                    const timestamp = new Date(msg.timestamp).toLocaleTimeString('id-ID', { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                    });
+
+                    return `
+                        <div class="flex ${bubbleAlign} mb-3">
+                            <div class="bubble-chat ${bubbleColor}">
+                                ${!isSender ? `<img class="bubble-avatar" src="/api/users/photo/${msg.user.email}" 
+                                    onerror="this.src='gambar/profile.jpeg'" alt="${msg.user.name}" />` : ''}
+                                <div class="bubble-content">
+                                    <div class="bubble-name">${msg.user.name}</div>
+                                    <div class="bubble-text">${msg.communityMsg}</div>
+                                    <div class="text-xs text-gray-500 mt-1">${timestamp}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Setup auto-refresh for chat
+                if (chatRefreshTimer) {
+                    clearTimeout(chatRefreshTimer);
+                }
+                chatRefreshTimer = setTimeout(window.renderChatHistory, 5000);
+            })
+            .catch(err => {
+                const chatBox = document.getElementById('chatBox');
+                if (chatBox) {
+                    chatBox.innerHTML = `<div class="text-red-500 text-sm text-center">Gagal memuat pesan.</div>`;
+                }
+                console.error("Error fetching chat messages:", err);
+            });
     }
+
+    // Attach to window so it is always available
+    window.renderChatHistory = renderChatHistory;
 
     function openCreateCommunityModal() {
         const modal = document.getElementById('createCommunityModal');
@@ -578,31 +660,17 @@
             .catch(err => console.error("Community logo upload error:", err));
     }
 
-        function uploadCommunityLogoToBackend(imageDataUrl, communityId) {
-        if (!communityId) return;
-
-        fetch(imageDataUrl)
-            .then(res => res.blob())
-            .then(blob => {
-                const formData = new FormData();
-                formData.append("communityId", communityId);
-                formData.append("photo", blob, "logo.png");
-
-                return fetch("http://localhost:8080/api/communities/photo", {
-                    method: "PUT",
-                    body: formData
-                });
-            })
-            .then(res => res.text())
-            .then(msg => console.log("Community logo uploaded:", msg))
-            .catch(err => console.error("Community logo upload error:", err));
-    }
-
         window.onload = function () {
             fetchCommunities();
             if (joinedCommunities.length > 0) {
                 setTimeout(() => {
                     selectCommunity(joinedCommunities[0]);
+                    // Ensure chat history is rendered after selecting the community
+                    setTimeout(() => {
+                        if (typeof window.renderChatHistory === "function") {
+                            window.renderChatHistory();
+                        }
+                    }, 200);
                 }, 200);
             }
         };
