@@ -190,134 +190,138 @@
     </div>
 
     <script>
-        const currentUserId = JSON.parse(localStorage.getItem("ecovUser"))?.id;
-        let communities = {};
+    const currentUserId = parseInt(localStorage.getItem("userId")) || null;
 
-        function fetchCommunities() {
-            fetch("/api/communities")
-                .then(res => res.json())
-                .then(data => {
-                    communities = {};
-                    data.forEach(c => {
-                        const key = c.communityName.replace(/\s+/g, '_');
-                        communities[key] = {
-                            id: c.idCommunity,
-                            name: c.communityName,
-                            description: c.description,
-                            events: [],
-                            members: [],
-                            logo: c.logo,
-                            creatorId: c.creator?.user?.id_user // this pulls the user id from nested creator
-                        };
-                    });
-                    renderCommunityList();
+    console.log("Logged-in currentUserId:", currentUserId);
+
+    let communities = {};
+    let selectedCommunityKey = null;
+    let joinedCommunities = JSON.parse(localStorage.getItem('joinedCommunities') || '[]');
+
+    function fetchCommunities() {
+        fetch("/api/communities")
+            .then(res => res.json())
+            .then(data => {
+                communities = {};
+                data.forEach(c => {
+                    const key = c.communityName.replace(/\s+/g, '_');
+                    communities[key] = {
+                        id: c.idCommunity,
+                        name: c.communityName,
+                        description: c.description,
+                        address: c.address,
+                        members: c.members,
+                        logo: c.logo,
+                        creatorId: c.creatorId
+                    };
                 });
-        }
+                renderCommunityList();
+            });
+    }
 
-        let selectedCommunityKey = null;
-        let joinedCommunities = JSON.parse(localStorage.getItem('joinedCommunities') || '[]');
+    function renderCommunityList() {
+    const list = document.getElementById('communityList');
+    if (!list) return;
 
-        function renderCommunityList() {
-            const list = document.getElementById('communityList');
-            if (!list) return;
-            // Pengurutan Komunitas
-            let keys = Object.keys(communities);
-            if (selectedCommunityKey && joinedCommunities.includes(selectedCommunityKey)) {
-                keys = [selectedCommunityKey, ...joinedCommunities.filter(k => k !== selectedCommunityKey), ...keys.filter(k => !joinedCommunities.includes(k) && k !== selectedCommunityKey)];
-            } else {
-                keys = [...joinedCommunities, ...keys.filter(k => !joinedCommunities.includes(k))];
-            }
-            let customLogos = {};
-            try { customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}'); } catch { }
-            list.innerHTML = keys.map(key => {
-                const c = communities[key];
-                const joined = joinedCommunities.includes(key);
-                // ga,mbar sebelumnya
-                let imgUrl = '';
-                if (customLogos[key]) {
-                    imgUrl = customLogos[key];
-                } else {
-                    switch (key) {
-                        case 'Peduli_Mks': imgUrl = 'https://lppm.unusa.ac.id/wp-content/uploads/2023/09/Picture1.png'; break;
-                        case 'Recycle.id': imgUrl = 'https://morethanstrata.com.au/wp-content/uploads/2023/09/1123213213123.jpg'; break;
-                        case 'Clean.id': imgUrl = 'https://neatclean.com/cdn/shop/articles/Non-Toxic-Cleaning---Neat-Clean_9a290919-5302-4b53-ae29-311e9ec509ab.jpg?v=1742909575'; break;
-                        case 'HijauBersama': imgUrl = 'https://dispendik.surabaya.go.id/wp-content/uploads/2015/03/banu-smp-pgri-6.jpg'; break;
-                        case 'EcoYouth': imgUrl = 'https://newsroom.toyota.co.id/app/sam/assets/news/9a49149705bf0b8e38690e6ca6d6d5ed.jpeg'; break;
-                        case 'ZeroWaste': imgUrl = 'https://shopequo.com/cdn/shop/articles/Zero-Waste_2bde2b51-61ac-48a6-b1ee-47b02ba2a641.png?v=1701594753&width=1600'; break;
-                        case 'GreenSteps': imgUrl = 'https://loquiz.com/wpmainpage/wp-content/uploads/2022/08/Logo-Green-Steps.png'; break;
-                        case 'EcoWarriors': imgUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEC_u8VMK6fgf2lz_mTeHkegN_OegS8egMrQ&s'; break;
-                        case 'RecycleHeroes': imgUrl = 'https://s3-eu-west-1.amazonaws.com/spacehive/bf86e8b5-3ebe-48dc-8268-a4e792d0fb74_xlarge_eco-warrior.jpg'; break;
-                        case 'SampahBijak': imgUrl = 'https://www.kreasa.id/wp-content/uploads/2021/06/kreasa-bijak-kelola-sampah.png'; break;
-                        default: imgUrl = c.logo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+    const currentUserId = parseInt(localStorage.getItem("userId")) || null;
+    console.log("Logged-in currentUserId:", currentUserId);
+
+    const keys = Object.keys(communities);
+
+    // Group communities
+    const creatorKeys = keys.filter(k => communities[k].creatorId == currentUserId);
+    const joinedKeys = keys.filter(k => !creatorKeys.includes(k) && joinedCommunities.includes(k));
+    const otherKeys = keys.filter(k => !creatorKeys.includes(k) && !joinedCommunities.includes(k));
+
+    const orderedKeys = [...creatorKeys, ...joinedKeys, ...otherKeys];
+
+    let customLogos = {};
+    try { customLogos = JSON.parse(localStorage.getItem('customCommunityLogos') || '{}'); } catch {}
+
+    list.innerHTML = orderedKeys.map(key => {
+        const c = communities[key];
+        const joined = joinedCommunities.includes(key);
+        const isCreator = c.creatorId == currentUserId;
+
+        console.log("Rendering:", c.name, "creatorId:", c.creatorId, "currentUserId:", currentUserId);
+
+        const imgUrl = customLogos[key] || c.logo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+        return `
+            <li>
+                <button class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100 relative" onclick="selectCommunity('${key}')">
+                    <img src="${imgUrl}" alt="${c.name}" class="w-8 h-8 rounded object-cover">
+                    ${c.name}
+                    ${
+                      isCreator
+                        ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs">Creator</span>'
+                        : (joined ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-[#678E34] text-white text-xs">Joined</span>' : '')
                     }
-                }
-                return `<li><button class="w-full flex items-center gap-3 text-left px-3 py-2 rounded hover:bg-green-100 relative" onclick="selectCommunity('${key}')">
-            <img src="${imgUrl}" alt="${c.name}" class="w-8 h-8 rounded object-cover">
-            ${c.name}
-            ${joined ? '<span class=\'ml-2 px-2 py-0.5 rounded-full bg-[#678E34] text-white text-xs\'>Joined</span>' : ''}
-        </button></li>`;
-            }).join('');
-        }
+                </button>
+            </li>
+        `;
+    }).join('');
+}
 
-        function selectCommunity(key) {
-            const c = communities[key];
-            if (!c) return;
-            selectedCommunityKey = key;
-            renderCommunityList();
-            document.getElementById('communityContent').innerHTML = `
-        <h2 class="text-2xl font-bold text-[#678E34] mb-2">${c.name}</h2>
-        <p class="mb-4 text-gray-700">${c.description}</p>
-        <div class="mb-4">
-          <h3 class="font-semibold text-lg mb-1">Event Komunitas</h3>
-          <ul class="list-disc pl-6 text-gray-700">
-            ${c.events.map(e => `<li>${e}</li>`).join('')}
-          </ul>
-        </div>
-        <div class="mb-6">
-          <h3 class="font-semibold text-lg mb-1">Anggota Komunitas</h3>
-          <ul class="flex flex-wrap gap-2 mb-4">
-            ${c.members.map(m => `<li class="bg-green-100 text-[#678E34] px-3 py-1 rounded-full text-sm">${m.name}</li>`).join('')}
-          </ul>
-          <div class="flex flex-wrap gap-4 mb-2">
-            ${c.members.map(m => `<img src="${m.avatar}" alt="${m.name}" class="w-12 h-12 object-cover rounded-full border-2 border-[#678E34]" />`).join('')}
-          </div>
-        </div>
-        <div class="mb-20">
-          <h3 class="font-semibold text-lg mb-2">Chat Komunitas</h3>
-          <div class="bg-green-50 border border-green-200 rounded-lg p-3 h-40 overflow-y-auto mb-2" id="chatBox">
-            <div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>
-          </div>
-          <div class="flex gap-2">
-            <input id="chatInput" type="text" class="flex-1 border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#678E34]" placeholder="Ketik pesan...">
-            <button onclick="sendChat()" class="bg-[#678E34] text-white px-4 py-1 rounded hover:bg-[#4a6b24]">Kirim</button>
-          </div>
-        </div>
-        ${joinedCommunities.includes(key) ? `<button onclick="leaveCommunity('${key}')" id="leaveBtn" class="fixed bottom-8 right-8 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-800 z-50">Leave Komunitas</button>` : `<button onclick="joinCommunity('${key}')" id="joinBtn" class="fixed bottom-8 right-8 bg-[#678E34] text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-[#4a6b24] z-50">Join Komunitas</button>`}
-      `;
-            setTimeout(() => {
-                const chatInput = document.getElementById('chatInput');
-                if (chatInput) {
-                    chatInput.addEventListener('keydown', function (e) {
-                        if (e.key === 'Enter') {
-                            sendChat();
-                        }
-                    });
-                }
-                renderChatHistory();
-            }, 100);
-        }
 
-        function joinCommunity(key) {
-            const id = communities[key].id;
-            const userId = localStorage.getItem("userId");
-            if (!userId) {
-                alert("Anda harus login untuk join komunitas.");
-                return;
+    function selectCommunity(key) {
+        const c = communities[key];
+        if (!c) return;
+        selectedCommunityKey = key;
+        renderCommunityList();
+
+        document.getElementById('communityContent').innerHTML = `
+            <h2 class="text-2xl font-bold text-[#678E34] mb-2">${c.name}</h2>
+            <p class="mb-4 text-gray-700">${c.description}</p>
+            <div class="mb-6">
+                <h3 class="font-semibold text-lg mb-1">Anggota Komunitas</h3>
+                <p class="text-sm text-gray-500 mb-2">Total Members: ${c.members}</p>
+            </div>
+            <div class="mb-20">
+                <h3 class="font-semibold text-lg mb-2">Chat Komunitas</h3>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 h-40 overflow-y-auto mb-2" id="chatBox">
+                    <div class="text-gray-400 text-sm text-center">Belum ada pesan. Mulai chat dengan komunitas!</div>
+                </div>
+                <div class="flex gap-2">
+                    <input id="chatInput" type="text" class="flex-1 border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#678E34]" placeholder="Ketik pesan...">
+                    <button onclick="sendChat()" class="bg-[#678E34] text-white px-4 py-1 rounded hover:bg-[#4a6b24]">Kirim</button>
+                </div>
+            </div>
+            ${
+                c.creatorId == currentUserId
+                    ? '' // Don't show Leave/Join button to the creator
+                    : (
+                        joinedCommunities.includes(key)
+                            ? `<button onclick="leaveCommunity('${key}')" id="leaveBtn" class="fixed bottom-8 right-8 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-800 z-50">Leave Komunitas</button>`
+                            : `<button onclick="joinCommunity('${key}')" id="joinBtn" class="fixed bottom-8 right-8 bg-[#678E34] text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-[#4a6b24] z-50">Join Komunitas</button>`
+                    )
             }
+        `;
 
-            fetch(`/api/communities/${id}/join?userId=${userId}`, { method: "POST" })
-                .then(res => res.text())
-                .then(msg => {
+        setTimeout(() => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        sendChat();
+                    }
+                });
+            }
+            renderChatHistory();
+        }, 100);
+    }
+
+    function joinCommunity(key) {
+        const id = communities[key].id;
+        const userId = currentUserId;
+        if (!userId) {
+            alert("Anda harus login untuk join komunitas.");
+            return;
+        }
+
+        fetch(`/api/communities/${id}/join?userId=${userId}`, { method: "POST" })
+            .then(res => res.text())
+            .then(msg => {
                 alert(msg);
                 if (!joinedCommunities.includes(key)) {
                     joinedCommunities.unshift(key);
@@ -325,193 +329,85 @@
                 }
                 selectCommunity(key);
                 renderCommunityList();
-                });
-            }
-
-
-        function leaveCommunity(key) {
-            const userId = localStorage.getItem("userId");
-            if (!userId) {
-                alert("Anda harus login untuk keluar dari komunitas.");
-                return;
-            }
-
-            const communityId = communities[key]?.id;
-            if (!communityId) {
-                alert("ID komunitas tidak ditemukan.");
-                return;
-            }
-
-            fetch(`/api/communities/${communityId}/leave?userId=${userId}`, {
-                method: "DELETE"
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-                return response.text();
-            })
-            .then(msg => {
-                alert(msg);
-                // Remove from joined list
-                const idx = joinedCommunities.indexOf(key);
-                if (idx !== -1) {
-                    joinedCommunities.splice(idx, 1);
-                    localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
-                }
-                fetchCommunities();
-                renderCommunityList();
-                document.getElementById('communityContent').innerHTML = `<p class="text-gray-500 text-center">Silakan pilih komunitas untuk melihat detailnya.</p>`;
-            })
-            .catch(err => {
-                alert("Error: " + err.message);
             });
+    }
+
+    function leaveCommunity(key) {
+        const userId = currentUserId;
+        if (!userId) {
+            alert("Anda harus login untuk keluar dari komunitas.");
+            return;
         }
 
-        function sendChat() {
-            const input = document.getElementById('chatInput');
-            if (!input || input.value.trim() === '') return;
+        const communityId = communities[key]?.id;
+        if (!communityId) {
+            alert("ID komunitas tidak ditemukan.");
+            return;
+        }
 
-            const msg = input.value;
-            const key = selectedCommunityKey;
-            const id = communities[key].id;
-
-            const user = JSON.parse(localStorage.getItem("ecovUser"));
-            if (!user || !user.id) {
-                alert("Anda harus login untuk mengirim pesan.");
-                return;
+        fetch(`/api/communities/${communityId}/leave?userId=${userId}`, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
             }
-
-            fetch(`/api/communities/${id}/messages?userId=${user.id}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(msg)
-            })
-                .then(res => res.text())
-                .then(() => {
-                    input.value = '';
-                    fetchMessages();
-                });
-        }
-
-        function fetchMessages() {
-            const key = selectedCommunityKey;
-            const id = communities[key].id;
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML = "Loading messages...";
-
-            fetch(`/api/communities/${id}/messages`)
-                .then(res => res.json())
-                .then(messages => {
-                    if (messages.length === 0) {
-                        chatBox.innerHTML = '<div class="text-gray-400 text-sm text-center">Belum ada pesan.</div>';
-                        return;
-                    }
-                    chatBox.innerHTML = messages.map(msg => `
-                        <div class="bubble-chat">
-                            <img src="https://ui-avatars.com/api/?name=User+${msg.idUser}" class="bubble-avatar" />
-                            <div class="bubble-content">
-                                <div class="bubble-name">User ${msg.idUser}</div>
-                                <div class="bubble-text">${msg.communityMsg}</div>
-                                <div class="flex items-center gap-1 mt-1 text-xs text-gray-500">
-                                    <span>${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                });
-        }
-
-        function deleteChatMessage(idx) {
-            let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '{}');
-            if (!chatHistory[selectedCommunityKey]) return;
-            chatHistory[selectedCommunityKey].splice(idx, 1);
-            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-            renderChatHistory();
-        }
-
-        // Show modal
-        function openCreateCommunityModal() {
-            var modal = document.getElementById('createCommunityModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeCreateCommunityModal() {
-            var modal = document.getElementById('createCommunityModal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }
-        // Handle form submit
-        const createForm = document.getElementById('createCommunityForm');
-        if (createForm) {
-            createForm.onsubmit = function (e) {
-            e.preventDefault();
-            const email = localStorage.getItem('userEmail');
-            if (!email) {
-                alert("You must be logged in to create a community.");
-                return;
+            return response.text();
+        })
+        .then(msg => {
+            alert(msg);
+            const idx = joinedCommunities.indexOf(key);
+            if (idx !== -1) {
+                joinedCommunities.splice(idx, 1);
+                localStorage.setItem('joinedCommunities', JSON.stringify(joinedCommunities));
             }
-
-            const fd = new FormData(createForm); // ✅ Add this
-            const communityName = fd.get('namakomunitas');
-            const address = fd.get('alamat');
-            const description = fd.get('deskripsi');
-            const logoFile = fd.get('logo');
-
-                let logoUrl = '';
-                if (logoFile && logoFile.size > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function (evt) {
-                        logoUrl = evt.target.result;
-                        addCommunity();
-                    };
-                    reader.readAsDataURL(logoFile);
-                } else {
-                    logoUrl = 'https://w7.pngwing.com/pngs/370/535/png-transparent-person-thinking-illustration-question-mark-animation-question-text-cartoon-desktop-wallpaper.png';
-                    addCommunity();
-                }
-
-                function addCommunity() {
-                    const payload = {
-                        email: email,                          // ✅ backend now expects email
-                        communityName: communityName,
-                        address: address,
-                        description: description,
-                        logo: logoUrl
-                    };
-
-                    fetch("/api/communities", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    }).then(res => {
-                        if (!res.ok) throw new Error("Failed to create community");
-                        return res.json();
-                    }).then(() => {
-                        closeCreateCommunityModal();
-                        fetchCommunities();
-                    }).catch(err => {
-                        alert("Error creating community: " + err.message);
-                    });
-                }
-            };
-        }
-        //  tombol create community
-        const createBtn = document.querySelector('button[onclick*="Create Community"]');
-        if (createBtn) {
-            createBtn.setAttribute('onclick', 'openCreateCommunityModal()');
-        }
-        // Inisialisasi sidebar komunitas saat load
-        window.onload = function () {
             fetchCommunities();
-            if (joinedCommunities.length > 0) {
-                // Delay slightly to ensure communities are fetched
-                setTimeout(() => {
-                    selectCommunity(joinedCommunities[0]);
-                }, 200);
-            }
-        };
-    </script>
+            renderCommunityList();
+            document.getElementById('communityContent').innerHTML = `<p class="text-gray-500 text-center">Silakan pilih komunitas untuk melihat detailnya.</p>`;
+        })
+        .catch(err => {
+            alert("Error: " + err.message);
+        });
+    }
+
+    function sendChat() {
+        const input = document.getElementById('chatInput');
+        if (!input || input.value.trim() === '') return;
+
+        const msg = input.value;
+        const key = selectedCommunityKey;
+        const id = communities[key].id;
+
+        if (!currentUserId) {
+            alert("Anda harus login untuk mengirim pesan.");
+            return;
+        }
+
+        fetch(`/api/communities/${id}/messages?userId=${currentUserId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(msg)
+        })
+            .then(res => res.text())
+            .then(() => {
+                input.value = '';
+                fetchMessages();
+            });
+    }
+
+    function renderChatHistory() {
+        // Placeholder
+    }
+
+    window.onload = function () {
+        fetchCommunities();
+        if (joinedCommunities.length > 0) {
+            setTimeout(() => {
+                selectCommunity(joinedCommunities[0]);
+            }, 200);
+        }
+    };
+</script>
+
 </body>
 </html>

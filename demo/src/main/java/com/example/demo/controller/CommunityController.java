@@ -25,9 +25,28 @@ public class CommunityController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public List<Community> getAllCommunities() {
-        return communityRepository.findAll();
-    }
+public List<Map<String, Object>> getAllCommunities() {
+    List<Community> communities = communityRepository.findAll();
+
+    return communities.stream().map(c -> {
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("idCommunity", c.getIdCommunity());
+        map.put("communityName", c.getCommunityName());
+        map.put("description", c.getDescription());
+        map.put("address", c.getAddress());
+        map.put("logo", c.getLogo());
+        map.put("members", c.getMembers());
+
+        // Get creator.user.id_user
+        Creator creator = c.getCreator();
+        Long creatorId = (creator != null && creator.getUser() != null) ? creator.getUser().getId_user() : null;
+        map.put("creatorId", creatorId);
+
+        return map;
+    }).toList();
+}
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Community> getCommunity(@PathVariable Long id) {
