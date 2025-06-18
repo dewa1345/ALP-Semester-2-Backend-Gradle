@@ -71,7 +71,7 @@
 
     <!-- Kanan -->
     <div class="w-full md:w-[55%] p-4">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Joined Communities</h3>
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Communities</h3>
       <div id="joined-communities" class="space-y-3">
       </div>
     </div>
@@ -253,7 +253,7 @@
 
     window.addEventListener("DOMContentLoaded", function () {
       const email = localStorage.getItem("userEmail");
-      console.log("Email dari localStorage:", email); // 👈 DEBUG LOG
+      console.log("Email dari localStorage:", email);
 
       if (email) {
         fetch(`http://localhost:8080/api/users/profile/${email}`)
@@ -262,16 +262,45 @@
             return response.json();
           })
           .then(profile => {
-            console.log("Data profil berhasil diambil:", profile);
             document.getElementById("display-name").textContent = "Nama: " + profile.name;
             document.getElementById("user-id").textContent = "ID: " + profile.id_user;
+
+            // ✅ Fetch joined communities
+            fetch(`http://localhost:8080/api/communities/user/${profile.id_user}`)
+              .then(res => {
+                if (!res.ok) throw new Error("Gagal mengambil joined communities");
+                return res.json();
+              })
+              .then(communities => {
+                console.log("Joined communities:", communities);
+                const container = document.getElementById("joined-communities");
+
+                // ✅ Limit to first 5 communities
+                const limited = communities.slice(0, 4);
+
+                container.innerHTML = limited.map(c => {
+                  const id = c.community?.idCommunity || c.idCommunity;
+                  const name = c.community?.communityName || c.communityName;
+                  const logoUrl = `http://localhost:8080/api/communities/logo/${id}`;
+                  return `
+                    <div class="bg-green-50 rounded-xl px-4 py-3 flex items-center gap-3">
+                      <img src="${logoUrl}" 
+                          class="w-10 h-10 rounded-full object-cover border border-green-300" 
+                          onerror="this.onerror=null; this.src='gambar/community-default.jpg'" />
+                      <span class="text-sm font-medium">${name}</span>
+                    </div>`;
+                }).join("");
+              })
+              .catch(error => {
+                console.error("Gagal mengambil joined communities:", error);
+              });
           })
           .catch(error => {
             console.error("Gagal mengambil data profil:", error);
             document.getElementById("display-name").textContent = "Nama: Tidak ditemukan";
           });
 
-        // Load profile photo from backend if exists
+        // ✅ Load profile photo
         fetch(`http://localhost:8080/api/users/photo/${email}`)
           .then(res => {
             if (res.ok) return res.blob();
@@ -286,6 +315,7 @@
             // fallback to default
             profilePhoto.src = "Gambar/profile.jpeg";
           });
+
       } else {
         console.warn("Email tidak ditemukan di localStorage");
         document.getElementById("display-name").textContent = "Nama: Tidak diketahui";
