@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CommunityUserRepository extends JpaRepository<CommunityUser, CommunityUserId> {
     List<CommunityUser> findByIdUser(Long idUser);
+    List<CommunityUser> findByCommunity_IdCommunity(Long idCommunity);
 }

@@ -11,9 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/communities")
@@ -214,8 +216,15 @@ public class CommunityController {
         return ResponseEntity.ok(communityMsgRepository.findByCommunity(community));
     }
 
-    @GetMapping("/user/{userId}")
-    public List<CommunityUser> getUserCommunities(@PathVariable Long userId) {
-        return communityUserRepository.findByIdUser(userId);
+    @GetMapping("/{id}/members")
+    public List<Map<String, Object>> getCommunityMembers(@PathVariable Long id) {
+        List<CommunityUser> users = communityUserRepository.findByCommunity_IdCommunity(id);
+        return users.stream().map(cu -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", cu.getUser().getName());
+            map.put("email", cu.getUser().getEmail());
+            map.put("hasPhoto", cu.getUser().getFotoKTP() != null);
+            return map;
+        }).collect(Collectors.toList());
     }
 }

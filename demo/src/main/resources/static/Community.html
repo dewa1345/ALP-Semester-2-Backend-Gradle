@@ -185,17 +185,6 @@
     <div class="navbar-spacer"></div>
     <div class="container mx-auto py-8 px-4">
         <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3 bg-white rounded-lg px-3 py-1">
-                <button onclick="window.history.back()"
-                    class="text-[#678E34] bg-white hover:bg-gray-100 px-3 py-1 rounded font-semibold flex items-center gap-1 border border-[#678E34]">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Back
-                </button>
-                <img src="logo.png" alt="Logo" class="h-8 w-8 object-contain" />
-            </div>
             <h1 class="text-3xl font-bold text-[#678E34]">Forum Komunitas Recycle</h1>
         </div>
         <div class="flex flex-col lg:flex-row gap-8">
@@ -337,13 +326,28 @@
         if (!c) return;
         selectedCommunityKey = key;
         renderCommunityList();
+        fetch(`/api/communities/${c.id}/members`)
+            .then(res => res.json())
+            .then(members => {
+                const grid = document.getElementById("memberGrid");
+                grid.innerHTML = members.map(m => {
+                const imgSrc = m.hasPhoto
+                    ? `http://localhost:8080/api/users/photo/${m.email}`
+                    : "Gambar/profile.jpeg";
+                return `
+                    <div class="flex flex-col items-center text-center">
+                    <img src="${imgSrc}" class="w-16 h-16 rounded-full object-cover border-2 border-green-400">
+                    <span class="mt-1 text-sm bg-green-100 px-2 py-0.5 rounded-full">${m.name}</span>
+                    </div>`;
+                }).join('');
+            });
 
         document.getElementById('communityContent').innerHTML = `
             <h2 class="text-2xl font-bold text-[#678E34] mb-2">${c.name}</h2>
             <p class="mb-4 text-gray-700">${c.description}</p>
             <div class="mb-6">
                 <h3 class="font-semibold text-lg mb-1">Anggota Komunitas</h3>
-                <p class="text-sm text-gray-500 mb-2">Total Members: ${c.members}</p>
+                <div id="memberGrid" class="flex flex-wrap gap-4 mb-6 mt-3"></div>
             </div>
             <div class="mb-20">
                 <h3 class="font-semibold text-lg mb-2">Chat Komunitas</h3>
