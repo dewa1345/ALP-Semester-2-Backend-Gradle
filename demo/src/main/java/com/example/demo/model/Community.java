@@ -16,7 +16,7 @@ public class Community {
     private String communityName;
 
     @ManyToOne
-    @JoinColumn(name = "idCreator", referencedColumnName = "idCreator")
+    @JoinColumn(name = "idCreator", referencedColumnName = "idCreator", nullable = true)
     @JsonBackReference
     private Creator creator;
 

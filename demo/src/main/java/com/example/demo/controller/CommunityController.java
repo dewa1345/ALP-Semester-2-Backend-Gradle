@@ -214,6 +214,33 @@ public class CommunityController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCommunity(@PathVariable Long id) {
+        Optional<Community> opt = communityRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+        }
+        Community community = opt.get();
+        try {
+            // Remove all related CommunityUser and CommunityMsg
+            communityUserRepository.deleteAll(communityUserRepository.findByCommunity_IdCommunity(id));
+            communityMsgRepository.deleteAll(communityMsgRepository.findByCommunity(community));
+            // Break the association before deleting creator
+            Creator creator = community.getCreator();
+            if (creator != null) {
+                community.setCreator(null);
+                communityRepository.save(community);
+                creatorRepository.deleteById(creator.getIdCreator());
+            }
+            communityRepository.deleteById(id);
+            return ResponseEntity.ok("Community deleted successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Failed to delete community: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/{id}/messages")
     public ResponseEntity<String> sendMessage(@PathVariable Long id, @RequestParam Long userId, @RequestBody String message) {
         Community community = communityRepository.findById(id).orElse(null);
@@ -257,4 +284,4 @@ public class CommunityController {
             return map;
         }).collect(Collectors.toList());
     }
-}
+};

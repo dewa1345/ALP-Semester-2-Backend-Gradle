@@ -9,6 +9,14 @@
 </head>
 
 <body style="min-height:100vh; display:flex; flex-direction:column;">
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  chat-icon="https:&#x2F;&#x2F;freeimghost.net&#x2F;images&#x2F;2025&#x2F;06&#x2F;19&#x2F;text-message-icon-png-10-removebg-preview-1.th.png"
+  intent="WELCOME"
+  chat-title="Ecobot"
+  agent-id="109a0375-027d-4ba9-b875-52b9f3220ef1"
+  language-code="id"
+></df-messenger>
   <header>
     <div class="logo" style="font-family: 'Poppins', sans-serif;">
       EcoV
@@ -107,24 +115,7 @@
       </div>
     </section>
 
-    <!-- Tombol buka chat -->
-    <div class="chatbot-button" id="openChat">💬</div>
 
-    <!-- Popup Chatbot -->
-    <div id="chatPopup">
-      <div id="chatHeader">
-        ChatBot
-        <span id="closeChat" style="cursor:pointer;">❌</span>
-      </div>
-      <div id="chatMessages"></div>
-      <form id="chatForm">
-        <input type="text" id="chatInput" placeholder="Ketik pesan..." />
-        <button type="submit">Kirim</button>
-      </form>
-    </div>
-
-    <!-- Nama pengguna tersembunyi -->
-    <span id="username" style="display: none;">Dewa</span>
   </main>
   <footer class="bg-green-100 py-4 w-full shadow-md flex items-center justify-center">
     <span class="text-center text-sm text-gray-600">&copy; 2025 Tim Creator 🌱. All rights reserved.</span>
