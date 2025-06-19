@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 
-<meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title> EcoV</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -110,7 +111,7 @@
         .navbar {
             width: 100vw;
             height: 60px;
-            background: #2e944b;
+            background: #235b37;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -118,7 +119,7 @@
             top: 0;
             left: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(46, 148, 75, 0.08);
+            box-shadow: 0 2px 8px rgba(35, 91, 55, 0.08);
         }
 
         .navbar button {
@@ -170,7 +171,8 @@
         }
     </style>
 </head>
-<body class="bg-green-50 min-h-screen text-gray-800">
+
+<body class="bg-green-50 text-gray-800 min-h-screen flex flex-col">
     <!-- NAVBAR ATAS -->
     <nav class="navbar">
         <button onclick="window.history.back()">
@@ -183,42 +185,43 @@
         <span>Community</span>
     </nav>
     <div class="navbar-spacer"></div>
-    <div class="container mx-auto py-8 px-4">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-[#678E34]">Forum Komunitas Recycle</h1>
-        </div>
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Sidebar komunitas -->
-            <aside class="lg:w-1/4 w-full">
-                <div class="bg-white rounded-xl shadow p-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
-                        <button
-                            class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
-                            style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span class="hidden sm:inline">Create Community</span>
-                        </button>
+    <main class="flex-grow">
+        <div class="container mx-auto py-8 px-4">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold text-[#678E34]">Forum Komunitas Recycle</h1>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar komunitas -->
+                <aside class="lg:w-1/4 w-full">
+                    <div class="bg-white rounded-xl shadow p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold">Pilih Komunitas</h2>
+                            <button
+                                class="bg-[#678E34] text-white px-2 py-1 md:px-3 md:py-1.5 rounded-lg font-semibold hover:bg-[#4a6b24] transition flex items-center gap-1 md:gap-2 text-xs md:text-sm w-auto md:w-fit min-w-[36px] min-h-[32px]"
+                                style="min-width:36px;min-height:32px;" onclick="openCreateCommunityModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                                <span class="hidden sm:inline">Create Community</span>
+                            </button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
+                            <ul id="communityList" class="space-y-2"></ul>
+                        </div>
                     </div>
-                    <div class="max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
-                        <ul id="communityList" class="space-y-2"></ul>
+                </aside>
+                <!-- Konten komunitas -->
+                <main class="flex-1">
+                    <div id="communityContent" class="bg-white rounded-xl shadow p-6 min-h-[350px]">
+                        <p class="text-gray-500 text-center">Silakan pilih komunitas untuk melihat detailnya.</p>
                     </div>
-                </div>
-            </aside>
-            <!-- Konten komunitas -->
-            <main class="flex-1">
-                <div id="communityContent" class="bg-white rounded-xl shadow p-6 min-h-[350px]">
-                    <p class="text-gray-500 text-center">Silakan pilih komunitas untuk melihat detailnya.</p>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Modal Create Community -->
     <div id="createCommunityModal" class="modal hidden">
         <div class="modal-content">
             <span class="close" onclick="closeCreateCommunityModal()">&times;</span>
@@ -675,10 +678,12 @@
             }
         };
     </script>
-    <footer class="bg-green-100 py-4 w-full shadow-md mt-auto">
+    <!-- NAVBAR BAWAH (FOOTER) -->
+    <footer class="bg-green-100 py-4 w-full shadow-md">
         <div class="container mx-auto px-4 text-center text-sm text-gray-600">
             &copy; 2025 Tim Creator 🌱. All rights reserved.
         </div>
     </footer>
 </body>
+
 </html>

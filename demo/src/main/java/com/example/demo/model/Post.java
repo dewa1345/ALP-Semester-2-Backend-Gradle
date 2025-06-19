@@ -24,7 +24,6 @@ public class Post {
 
     private String content;
 
-    private int favorite;
     private int follow;
 
     @ManyToOne

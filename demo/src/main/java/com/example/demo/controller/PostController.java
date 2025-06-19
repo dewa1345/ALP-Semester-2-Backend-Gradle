@@ -23,6 +23,7 @@ public class PostController {
     private final UserRepository userRepo;
     private final CommunityRepository communityRepo;
     private final CreatorRepository creatorRepository;
+    private final PostUserRepository postUserRepo;
 
     @GetMapping
     public ResponseEntity<List<Post>> getAllPosts() {
@@ -38,7 +39,6 @@ public class PostController {
         if (post.getCommunity() != null) {
             Community community = communityRepo.findById(post.getCommunity().getIdCommunity()).orElse(null);
             if (community == null) {
-                System.out.println("❌ Community not found, post not saved.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid community ID.");
             }
             post.setCommunity(community);
@@ -48,7 +48,6 @@ public class PostController {
 
         try {
             Post saved = postRepo.save(post);
-            System.out.println("✅ Post saved with ID: " + saved.getIdPost());
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,8 +55,7 @@ public class PostController {
         }
     }
 
-    
-
+    // Chat feature
     @GetMapping("/{postId}/chat")
     public ResponseEntity<List<PostMessage>> getChat(@PathVariable Long postId) {
         return ResponseEntity.ok(msgRepo.findByPost_IdPost(postId));
@@ -81,6 +79,7 @@ public class PostController {
         return ResponseEntity.ok(msgRepo.save(message));
     }
 
+    // Communities created by user
     @GetMapping("/communities/created")
     public ResponseEntity<List<Map<String, Object>>> getCommunitiesCreatedByUser(@RequestParam String email) {
         User user = userRepo.findByEmail(email);
@@ -100,6 +99,7 @@ public class PostController {
         return ResponseEntity.ok(createdCommunities);
     }
 
+    // Upload post photo
     @PutMapping("/photo")
     public ResponseEntity<?> uploadPostPhoto(@RequestParam("postId") Long postId,
                                              @RequestPart("photo") MultipartFile photoFile) {
@@ -119,6 +119,7 @@ public class PostController {
         }
     }
 
+    // Get post photo
     @GetMapping("/photo/{postId}")
     public ResponseEntity<byte[]> getPostPhoto(@PathVariable Long postId) {
         Optional<Post> opt = postRepo.findById(postId);
@@ -128,5 +129,72 @@ public class PostController {
         return ResponseEntity.ok()
                 .header("Content-Type", "image/png")
                 .body(opt.get().getPostPic());
+    }
+
+    // === JOIN/UNJOIN FEATURES ===
+
+    @PostMapping("/{postId}/follow")
+public ResponseEntity<String> followPost(@PathVariable Long postId, @RequestParam String email) {
+    Post post = postRepo.findById(postId).orElse(null);
+    User user = userRepo.findByEmail(email);
+
+    if (post == null || user == null) {
+        return ResponseEntity.badRequest().body("Invalid post or user.");
+    }
+
+    PostUserId id = new PostUserId(post.getIdPost(), user.getId_user());
+    if (postUserRepo.existsById(id)) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Already joined.");
+    }
+
+    PostUser pu = new PostUser();
+    pu.setId(id);
+    pu.setPost(post);
+    pu.setUser(user);
+    postUserRepo.save(pu);
+
+    // ⬆️ Increment follow count
+    post.setFollow(post.getFollow() + 1);
+    postRepo.save(post);
+
+    return ResponseEntity.ok("Successfully joined the campaign.");
+}
+
+
+    @PostMapping("/{postId}/unfollow")
+public ResponseEntity<String> unfollowPost(@PathVariable Long postId, @RequestParam String email) {
+    Post post = postRepo.findById(postId).orElse(null);
+    User user = userRepo.findByEmail(email);
+
+    if (post == null || user == null) {
+        return ResponseEntity.badRequest().body("Invalid post or user.");
+    }
+
+    PostUserId id = new PostUserId(post.getIdPost(), user.getId_user());
+    if (!postUserRepo.existsById(id)) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User is not joined.");
+    }
+
+    postUserRepo.deleteById(id);
+
+    // ⬇️ Decrement follow count but prevent going below 0
+    post.setFollow(Math.max(0, post.getFollow() - 1));
+    postRepo.save(post);
+
+    return ResponseEntity.ok("Successfully unjoined the campaign.");
+}
+
+
+    @GetMapping("/joined")
+    public ResponseEntity<List<Post>> getJoinedPosts(@RequestParam String email) {
+        User user = userRepo.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<PostUser> joined = postUserRepo.findByUser(user);
+        List<Post> posts = joined.stream().map(PostUser::getPost).toList();
+
+        return ResponseEntity.ok(posts);
     }
 }

@@ -19,22 +19,52 @@
             line-height: 1.6;
         }
         /* Navbar Styles */
-        
         .navbar {
-            background-color: #2e944b;
-            color: white;
-            padding: 15px 20px;
+            width: 100vw;
+            height: 60px;
+            background: #235c37;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(46, 148, 75, 0.08);
         }
-        
-        .navbar-brand {
+
+        .navbar button {
+            margin-left: 24px;
+            background: #fff;
+            color: #2e944b;
+            border: 2px solid #2e944b;
+            border-radius: 8px;
+            padding: 8px 22px 8px 14px;
+            font-weight: 600;
+            font-size: 1.1rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            width: 100%;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(46, 148, 75, 0.07);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .navbar button:hover {
+            background: #e6f4ec;
+            color: #176b34;
+        }
+
+        .navbar span {
+            margin-right: 32px;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .navbar-spacer {
+            height: 70px;
         }
         
         .cartesian-text {
@@ -724,17 +754,45 @@
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
         }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #2e944b;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="navbar-brand">
-            <a href="homepage.html" class="back-btn">← Back</a>
-            <span class="cartesian-text">Campaign</span>
-        </div>
+        <button onclick="window.history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22"
+                height="22">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            BACK
+        </button>
+        <span>Campaign</span>
     </nav>
+    <div class="navbar-spacer"></div>
 
     <div class="container">
         <main class="main-content">
@@ -1006,7 +1064,18 @@
                     resetForm();
                 }
             });
+            
             loadEvents(); // load from backend
+            const userEmail = localStorage.getItem("userEmail");
+            if (userEmail) {
+                fetch(`http://localhost:8080/api/posts/joined?email=${encodeURIComponent(userEmail)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        joinedCampaignIds = data.map(post => post.idPost);
+                        renderEvents();
+                    })
+                    .catch(err => console.error("❌ Failed to load joined campaigns", err));
+            }
             renderUpcomingEvents();
             renderCampaigns();
             renderLatestCampaigns();
@@ -1125,14 +1194,15 @@
 
         // Render events list
         function renderEvents() {
-            const container = document.getElementById("eventsList");
-            container.innerHTML = "";
+    const container = document.getElementById("eventsList");
+    container.innerHTML = "";
 
-            const sorted = [...events].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-            sorted.forEach(event => {
-                container.appendChild(createEventCard(event));
-            });
-        }
+    const sorted = [...events].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    sorted.forEach(event => {
+        container.appendChild(createEventCard(event));
+    });
+}
+
 
         // Show event details in modal
         function showEventDetails(eventId) {
@@ -1365,7 +1435,7 @@
 
         const action = isUserJoined ? "unfollow" : "follow";
 
-        fetch(`/api/posts/${event.idPost}/${action}?email=${encodeURIComponent(userEmail)}`, {
+        fetch(`http://localhost:8080/api/posts/${event.idPost}/${action}?email=${encodeURIComponent(userEmail)}`, {
             method: "POST"
         }).then(() => {
             if (isUserJoined) {
@@ -1373,9 +1443,10 @@
             } else {
                 joinedCampaignIds.push(event.idPost);
             }
-            renderEvents(); // refresh
+            renderEvents(); // Refresh UI
         }).catch(err => {
             console.error("❌ Join/Unjoin failed", err);
+            alert("Failed to update participation status.");
         });
     });
 

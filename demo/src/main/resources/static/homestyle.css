@@ -18,9 +18,11 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
+  height: 60px;
+  /* Ubah jadi 60px agar sama dengan Community */
   padding: 0 2rem;
-  background-color: var(--green-dark);
+  background-color: #235b37;
+  /* hijau gelap sesuai gambar */
   color: var(--white);
   overflow: visible;
 }
@@ -141,6 +143,7 @@ top-community {
   gap: 20px;
   /* jarak antar card */
   padding: 20px;
+  margin-bottom: 120px;
 }
 
 .top-community-title {
@@ -250,4 +253,124 @@ top-community {
 .btn-like:hover,
 .btn-join:hover {
   transform: scale(1.1);
+}
+
+/* Chatbot Button */
+.chatbot-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--green-dark);
+  color: var(--white);
+  padding: 15px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Chatbot Popup */
+#chatPopup {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  height: 450px;
+  background-color: var(--white);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+#chatHeader {
+  background-color: var(--green-dark);
+  color: var(--white);
+  padding: 10px 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#chatMessages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: var(--gray-light);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Message Bubble */
+.message {
+  padding: 10px 14px;
+  border-radius: 20px;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: var(--green-light);
+  text-align: right;
+}
+
+.bot-message {
+  align-self: flex-start;
+  background-color: #e4e4e4;
+  text-align: left;
+}
+
+/* Chat Input */
+#chatForm {
+  display: flex;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  background-color: #fafafa;
+}
+
+#chatInput {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
+
+#chatForm button {
+  background-color: var(--green-dark);
+  color: var(--white);
+  border: none;
+  padding: 8px 16px;
+  margin-left: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Footer */
+footer {
+  background-color: #d6fbe7;
+  min-height: 35px;
+  /* diperkecil dari 60px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(46, 148, 75, 0.08);
+}
+
+footer span {
+  color: #222;
+  font-size: 0.75rem;
+  /* diperkecil dari 0.95rem */
+  font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 0.5px;
 }
