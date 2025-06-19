@@ -4,27 +4,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ECOV</title>
+  <title>EcoV</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-green-50 text-gray-800 flex flex-col min-h-screen">
-  <header class="bg-[#678E34] w-full py-3 px-6 shadow-md flex items-center justify-between">
-    <div class="flex items-center gap-3 bg-white rounded-lg px-3 py-1">
-      <button onclick="window.history.back()"
-        class="text-[#678E34] bg-white hover:bg-gray-100 px-3 py-1 rounded font-semibold flex items-center gap-1 border border-[#678E34]">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        Back
-      </button>
-      <img src="logo.png" alt="Logo" class="h-8 w-8 object-contain" />
-    </div>
-    <h1 class="text-white text-xl font-bold flex items-center gap-2">
-      About us ♻️🌱
-    </h1>
-  </header>
+  <!-- NAVBAR ATAS SAMA PERSIS DENGAN COMMUNITY DAN CAMPAIGN -->
+  <nav
+    style="width:100vw; height:60px; background:#2e944b; display:flex; align-items:center; justify-content:space-between; position:fixed; top:0; left:0; z-index:100; box-shadow:0 2px 8px rgba(46,148,75,0.08);">
+    <button onclick="window.history.back()"
+      style="margin-left:24px; background:#fff; color:#2e944b; border:2px solid #2e944b; border-radius:8px; padding:8px 22px 8px 14px; font-weight:600; font-size:1.1rem; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(46,148,75,0.07); cursor:pointer; transition:background 0.15s, color 0.15s;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22"
+        height="22">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      BACK
+    </button>
+    <span style="margin-right:32px; color:#fff; font-size:1.5rem; font-weight:700; letter-spacing:1px;">About</span>
+  </nav>
+  <div style="height:70px;"></div>
+
   <!-- Main content (scrollable tapi tanpa scrollbar) -->
   <main class="flex-grow overflow-y-auto no-scrollbar">
     <div class="container mx-auto px-4 py-8 flex flex-col gap-8 pb-24">
@@ -91,7 +91,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center">
           <!-- Anggota 1 -->
           <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="gerawrr.jpg" alt="Gerawrr"
+            <img src="Gambar/gerawrr.jpg" alt="Gerawrr"
               class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
             <div class="text-center">
               <div class="font-bold">Gerawrr</div>
@@ -100,7 +100,7 @@
           </div>
           <!-- Anggota 2 -->
           <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="Raka_foto.jpg" alt="Rakha"
+            <img src="Gambar/Raka_foto.jpg" alt="Rakha"
               class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
             <div class="text-center">
               <div class="font-bold">Rakha</div>
@@ -109,7 +109,8 @@
           </div>
           <!-- Anggota 3 -->
           <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="mike.jpg" alt="Mike" class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <img src="Gambar/mike.jpg" alt="Mike"
+              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
             <div class="text-center">
               <div class="font-bold">Mike</div>
               <div class="text-xs text-gray-600">Developer Back-End & Database Engineer 📖</div>
@@ -117,7 +118,7 @@
           </div>
           <!-- Anggota 4 (Brit) -->
           <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="brit pict.jpg" alt="Brit"
+            <img src="Gambar/brit pict.jpg" alt="Brit"
               class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
             <div class="text-center">
               <div class="font-bold">Brit</div>
@@ -126,7 +127,8 @@
           </div>
           <!-- Anggota 5 -->
           <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="dew.png" alt="Dew" class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
+            <img src="Gambar/dew.png" alt="Dew"
+              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
             <div class="text-center">
               <div class="font-bold">Dew</div>
               <div class="text-xs text-gray-600">Project Coordinator & Public Relations 🦄</div>
@@ -177,12 +179,24 @@
     </div>
   </main>
 
-  <!-- Footer tetap di dasar viewport -->
-  <footer class="bg-green-100 py-4 fixed bottom-0 left-0 w-full shadow-md">
+  <!-- Footer copyright, hanya muncul saat scroll ke bawah -->
+  <footer id="copyrightFooter" class="bg-green-100 py-4 w-full shadow-md" style="display:none; position:fixed; left:0; bottom:0; z-index:40;">
     <div class="container mx-auto px-4 text-center text-sm text-gray-600">
       &copy; 2025 Tim Creator 🌱. All rights reserved.
     </div>
   </footer>
+
+  <script>
+    // Tampilkan copyrightFooter hanya jika user scroll ke bawah (nyampe bawah halaman)
+    window.addEventListener('scroll', function() {
+      var copyright = document.getElementById('copyrightFooter');
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+        copyright.style.display = 'block';
+      } else {
+        copyright.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 
 </html>
