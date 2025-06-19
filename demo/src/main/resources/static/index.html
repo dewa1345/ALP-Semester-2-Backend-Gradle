@@ -32,16 +32,16 @@
     <div class="form-container sign-up-container">
       <form id="signup-form">
         <h1>Create Account</h1>
-        <input type="text" id="signup-name" placeholder="Name" required />
+        <input type="text" id="signup-name" placeholder="Nama" required />
         <input type="email" id="signup-email" placeholder="Email (Gmail)" required />
         <div class="password-container">
-          <input type="password" placeholder="Password" id="signup-password" required />
+          <input type="password" placeholder="Kata sandi" id="signup-password" required />
           <span class="eye-icon" onclick="togglePassword('signup-password')">👁️</span>
         </div>
-        <button type="button" onclick="handleSignUp()">Sign Up</button>
+        <button type="button" onclick="handleSignUp()">Daftar</button>
 
         <div class="social-icons">
-          <span>or sign up with</span>
+          <span>atau daftar dengan</span>
           <div class="social-container">
             <a href="#"><img src="Gambar/facebook.png" alt="Facebook" /></a>
             <a href="#"><img src="Gambar/google.png" alt="Google" /></a>
@@ -54,23 +54,23 @@
     <!-- Sign In -->
     <div class="form-container sign-in-container">
       <form id="login-form" onsubmit="return validateLogin(event)">
-        <h1>Sign In</h1>
+        <h1>Masuk</h1>
         <input type="email" id="login-name" placeholder="Email" required />
         <div class="password-container">
-          <input type="password" placeholder="Password" id="signin-password" required />
+          <input type="password" placeholder="Kata sandi" id="signin-password" required />
           <span class="eye-icon" onclick="togglePassword('signin-password')">👁️</span>
         </div>
 
         <div style="width: 100%; display: flex; align-items: center; margin-top: 10px; margin-bottom: 15px;">
           <input type="checkbox" id="remember" style="margin-right: 8px; width: 16px; height: 16px;" />
-          <label for="remember" style="font-size: 14px; cursor: pointer;">Remember me</label>
+          <label for="remember" style="font-size: 14px; cursor: pointer;">Ingat saya</label>
         </div>
 
-        <button type="submit">Login</button>
-        <p style="margin-top: 10px;">Don't have an account? <strong>Create my account</strong></p>
+        <button type="submit">Masuk</button>
+        <p style="margin-top: 10px;">Tidak punya akun? <strong>Buat akun</strong></p>
 
         <div class="social-icons">
-          <span>or sign in with</span>
+          <span>atau masuk dengan</span>
           <div class="social-container">
             <a href="#"><img src="Gambar/facebook.png" alt="Facebook" /></a>
             <a href="#"><img src="Gambar/google.png" alt="Google" /></a>
@@ -85,16 +85,16 @@
       <div class="overlay">
         <div class="overlay-panel overlay-left" style="background-image: url('evo1.jpg'); background-size: cover; background-position: center;">
           <div class="overlay-text">
-            <h1>Welcome Back!</h1>
-            <p>To keep connected, please login</p>
-            <button class="ghost" id="signIn">Login</button>
+            <h1>Selamat Datang!</h1>
+            <p>Untuk tetap terhubung, silakan masuk</p>
+            <button class="ghost" id="signIn">Masuk</button>
           </div>
         </div>
         <div class="overlay-panel overlay-right" style="background-image: url('evo2.jpg'); background-size: cover; background-position: center;">
           <div class="overlay-text">
-            <h1>Hello, Friend!</h1>
-            <p>Enter your personal details to register</p>
-            <button class="ghost" id="signUp">Sign Up</button>
+            <h1>Halo, Teman</h1>
+            <p>Masukkan informasi Anda untuk mendaftar</p>
+            <button class="ghost" id="signUp">Masuk</button>
           </div>
         </div>
       </div>
