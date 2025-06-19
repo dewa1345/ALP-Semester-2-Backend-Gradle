@@ -32,10 +32,6 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody Post post) {
-        System.out.println("📥 Received new post:");
-        System.out.println("Title: " + post.getTitle());
-        System.out.println("Community ID: " + (post.getCommunity() != null ? post.getCommunity().getIdCommunity() : "null"));
-
         if (post.getCommunity() != null) {
             Community community = communityRepo.findById(post.getCommunity().getIdCommunity()).orElse(null);
             if (community == null) {
@@ -51,35 +47,67 @@ public class PostController {
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save post.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save post."+ e.getMessage());
         }
     }
 
-    // Chat feature
+    // ✅ Load chat messages
     @GetMapping("/{postId}/chat")
-    public ResponseEntity<List<PostMessage>> getChat(@PathVariable Long postId) {
-        return ResponseEntity.ok(msgRepo.findByPost_IdPost(postId));
+    public ResponseEntity<List<Map<String, Object>>> getChat(@PathVariable Long postId) {
+        List<PostMessage> messages = msgRepo.findByPost_IdPost(postId);
+
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (PostMessage msg : messages) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", msg.getId());
+            map.put("content", msg.getPostMsg());
+            map.put("timestamp", msg.getTimestamp());
+
+            User user = msg.getUser();
+            Map<String, Object> sender = new HashMap<>();
+            sender.put("name", user.getName());
+            sender.put("email", user.getEmail());
+            sender.put("avatarUrl", "/api/users/photo/" + user.getEmail());
+
+            map.put("user", sender);
+            response.add(map);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
+    // ✅ Save chat message
     @PostMapping("/{postId}/chat")
-    public ResponseEntity<PostMessage> addMessage(@PathVariable Long postId,
-                                                  @RequestParam String email,
-                                                  @RequestBody PostMessage message) {
+    public ResponseEntity<?> addMessage(@PathVariable Long postId,
+                                        @RequestParam String email,
+                                        @RequestBody PostMessage message) {
+        System.out.println("📨 Chat message incoming:");
+        System.out.println("Post ID: " + postId);
+        System.out.println("Email: " + email);
+        System.out.println("Message body: " + message.getPostMsg());
+
         Post post = postRepo.findById(postId).orElse(null);
         User user = userRepo.findByEmail(email);
 
         if (post == null || user == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Invalid post or user.");
+        }
+
+        if (message.getPostMsg() == null || message.getPostMsg().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is empty.");
         }
 
         message.setPost(post);
         message.setUser(user);
         message.setTimestamp(LocalDateTime.now());
 
-        return ResponseEntity.ok(msgRepo.save(message));
+        PostMessage saved = msgRepo.save(message);
+        System.out.println("✅ Chat message saved with ID: " + saved.getId());
+
+        return ResponseEntity.ok(saved);
     }
 
-    // Communities created by user
+    // ✅ Communities created by user
     @GetMapping("/communities/created")
     public ResponseEntity<List<Map<String, Object>>> getCommunitiesCreatedByUser(@RequestParam String email) {
         User user = userRepo.findByEmail(email);
@@ -99,7 +127,7 @@ public class PostController {
         return ResponseEntity.ok(createdCommunities);
     }
 
-    // Upload post photo
+    // ✅ Upload post photo
     @PutMapping("/photo")
     public ResponseEntity<?> uploadPostPhoto(@RequestParam("postId") Long postId,
                                              @RequestPart("photo") MultipartFile photoFile) {
@@ -119,7 +147,7 @@ public class PostController {
         }
     }
 
-    // Get post photo
+    // ✅ Get post photo
     @GetMapping("/photo/{postId}")
     public ResponseEntity<byte[]> getPostPhoto(@PathVariable Long postId) {
         Optional<Post> opt = postRepo.findById(postId);
@@ -131,60 +159,56 @@ public class PostController {
                 .body(opt.get().getPostPic());
     }
 
-    // === JOIN/UNJOIN FEATURES ===
-
+    // ✅ Join a campaign
     @PostMapping("/{postId}/follow")
-public ResponseEntity<String> followPost(@PathVariable Long postId, @RequestParam String email) {
-    Post post = postRepo.findById(postId).orElse(null);
-    User user = userRepo.findByEmail(email);
+    public ResponseEntity<String> followPost(@PathVariable Long postId, @RequestParam String email) {
+        Post post = postRepo.findById(postId).orElse(null);
+        User user = userRepo.findByEmail(email);
 
-    if (post == null || user == null) {
-        return ResponseEntity.badRequest().body("Invalid post or user.");
+        if (post == null || user == null) {
+            return ResponseEntity.badRequest().body("Invalid post or user.");
+        }
+
+        PostUserId id = new PostUserId(post.getIdPost(), user.getId_user());
+        if (postUserRepo.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Already joined.");
+        }
+
+        PostUser pu = new PostUser();
+        pu.setId(id);
+        pu.setPost(post);
+        pu.setUser(user);
+        postUserRepo.save(pu);
+
+        post.setFollow(post.getFollow() + 1);
+        postRepo.save(post);
+
+        return ResponseEntity.ok("Successfully joined the campaign.");
     }
 
-    PostUserId id = new PostUserId(post.getIdPost(), user.getId_user());
-    if (postUserRepo.existsById(id)) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Already joined.");
-    }
-
-    PostUser pu = new PostUser();
-    pu.setId(id);
-    pu.setPost(post);
-    pu.setUser(user);
-    postUserRepo.save(pu);
-
-    // ⬆️ Increment follow count
-    post.setFollow(post.getFollow() + 1);
-    postRepo.save(post);
-
-    return ResponseEntity.ok("Successfully joined the campaign.");
-}
-
-
+    // ✅ Unjoin a campaign
     @PostMapping("/{postId}/unfollow")
-public ResponseEntity<String> unfollowPost(@PathVariable Long postId, @RequestParam String email) {
-    Post post = postRepo.findById(postId).orElse(null);
-    User user = userRepo.findByEmail(email);
+    public ResponseEntity<String> unfollowPost(@PathVariable Long postId, @RequestParam String email) {
+        Post post = postRepo.findById(postId).orElse(null);
+        User user = userRepo.findByEmail(email);
 
-    if (post == null || user == null) {
-        return ResponseEntity.badRequest().body("Invalid post or user.");
+        if (post == null || user == null) {
+            return ResponseEntity.badRequest().body("Invalid post or user.");
+        }
+
+        PostUserId id = new PostUserId(post.getIdPost(), user.getId_user());
+        if (!postUserRepo.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User is not joined.");
+        }
+
+        postUserRepo.deleteById(id);
+        post.setFollow(Math.max(0, post.getFollow() - 1));
+        postRepo.save(post);
+
+        return ResponseEntity.ok("Successfully unjoined the campaign.");
     }
 
-    PostUserId id = new PostUserId(post.getIdPost(), user.getId_user());
-    if (!postUserRepo.existsById(id)) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User is not joined.");
-    }
-
-    postUserRepo.deleteById(id);
-
-    // ⬇️ Decrement follow count but prevent going below 0
-    post.setFollow(Math.max(0, post.getFollow() - 1));
-    postRepo.save(post);
-
-    return ResponseEntity.ok("Successfully unjoined the campaign.");
-}
-
-
+    // ✅ Get posts a user has joined
     @GetMapping("/joined")
     public ResponseEntity<List<Post>> getJoinedPosts(@RequestParam String email) {
         User user = userRepo.findByEmail(email);
@@ -197,4 +221,57 @@ public ResponseEntity<String> unfollowPost(@PathVariable Long postId, @RequestPa
 
         return ResponseEntity.ok(posts);
     }
+
+    // ✅ Get event participants + creator
+    @GetMapping("/{postId}/members")
+    public ResponseEntity<List<Map<String, Object>>> getPostMembers(@PathVariable Long postId) {
+        Optional<Post> optionalPost = postRepo.findById(postId);
+        if (optionalPost.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Post post = optionalPost.get();
+        List<PostUser> postUsers = postUserRepo.findByPost_IdPost(postId);
+
+        Set<Long> userIds = new HashSet<>();
+        List<Map<String, Object>> members = new ArrayList<>();
+
+        for (PostUser pu : postUsers) {
+            User u = pu.getUser();
+            userIds.add(u.getId_user());
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", u.getId_user());
+            map.put("name", u.getName());
+            map.put("email", u.getEmail());
+            map.put("avatarUrl", "/api/users/photo/" + u.getEmail());
+            members.add(map);
+        }
+
+        // Include the creator if not already added
+        List<Creator> creators = creatorRepository.findByCommunity(post.getCommunity());
+        if (!creators.isEmpty()) {
+            User creator = creators.get(0).getUser();
+            if (!userIds.contains(creator.getId_user())) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", creator.getId_user());
+                map.put("name", creator.getName());
+                map.put("email", creator.getEmail());
+                map.put("avatarUrl", "/api/users/photo/" + creator.getEmail());
+                members.add(map);
+            }
+        }
+
+        return ResponseEntity.ok(members);
+    }
+
+        @DeleteMapping("/{postId}")
+        public ResponseEntity<?> deletePost(@PathVariable Long postId) {
+            if (!postRepo.existsById(postId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found.");
+            }
+
+            postRepo.deleteById(postId);
+            return ResponseEntity.ok("Post deleted.");
+        }
 }

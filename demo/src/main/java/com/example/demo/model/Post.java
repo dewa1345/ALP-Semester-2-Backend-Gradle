@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -47,4 +49,13 @@ public class Post {
     private LocalTime endTime;
 
     private String location;
+
+    @JsonProperty("creatorEmail")
+    public String getCreatorEmail() {
+        if (community != null && community.getCreator() != null) {
+            return community.getCreator().getUser().getEmail();
+        }
+        return null;
+    }
+
 }

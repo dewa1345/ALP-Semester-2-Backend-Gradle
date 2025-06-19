@@ -23,6 +23,7 @@ public class Community {
     private String location;
     private String description;
     private int members;
+    private int rating;
     @Lob
     @Column(name = "logo", columnDefinition = "LONGBLOB")
     private byte[] logo;
