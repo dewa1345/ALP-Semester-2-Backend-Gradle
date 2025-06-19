@@ -147,6 +147,9 @@
         
         .events-list {
             list-style-type: none;
+            max-height: 400px; /* adjust height to fit ~5 events nicely */
+            overflow-y: auto;
+            padding-right: 10px; /* space for scrollbar */
         }
         
         .events-list li {
@@ -170,27 +173,36 @@
             color: #2e944b;
             margin-bottom: 5px;
         }
+
+        .events-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
         
         .join-btn {
             position: absolute;
-            right: 15px;
+            right: 20px;
             bottom: 15px;
-            background: #2e944b;
+            background-color: #2e944b;
             color: white;
             border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: background 0.3s;
         }
-        
+
         .join-btn:hover {
-            background: #247a3a;
+            background-color: #247a3a;
         }
-        
+
         .joined-btn {
-            background: #4CAF50;
+            background-color: #4CAF50;
         }
         
         .members-grid {
@@ -484,6 +496,10 @@
             border-bottom: 1px dashed #eee;
             cursor: pointer;
         }
+
+        .upcoming-title {
+            margin-bottom: 1rem; /* or try 16px, 20px, etc. */
+        }
         
         .event-date {
             background: #2e944b;
@@ -665,6 +681,49 @@
                 order: -1;
             }
         }
+
+        .event-card {
+            background: #f9f9f9;
+            border-left: 4px solid #2e944b;
+            border-radius: 8px;
+            padding: 15px 20px 45px;
+            position: relative;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .event-card:hover {
+            background: #f0f7f1;
+        }
+
+        .event-card-header {
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2e944b;
+            margin-bottom: 6px;
+        }
+
+        .event-card-title {
+            color: #2e944b;
+        }
+
+        .event-card-date {
+            color: #2e944b;
+            margin-left: 5px;
+        }
+
+        .event-card-desc {
+            font-size: 0.9rem;
+            color: #444;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
@@ -731,7 +790,7 @@
             </div>
 
             <div class="upcoming-events">
-                <h3 class="calendar-title">Event Mendatang</h3>
+                <h3 class="calendar-title upcoming-title">Event Mendatang</h3>
                 <div id="upcomingEvents">
                     <!-- Upcoming events will be added dynamically -->
                 </div>
@@ -739,7 +798,7 @@
 
             <div class="campaign-list-sidebar">
                 <h3 class="calendar-title">Campaign Terbaru</h3>
-                <div id="campaignsList">
+                <div id="campaignList"> <!-- ✅ this ID must match your JS -->
                     <!-- Campaigns will be added dynamically -->
                 </div>
             </div>
@@ -761,8 +820,10 @@
                 </div>
                 <div class="form-group">
                     <label for="community">Komunitas*</label>
-                    <input type="text" id="community" value="Peduli_Mks" required>
-                    <div class="error-message" id="communityError">Harap isi nama komunitas</div>
+                    <select id="communitySelect" required>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                    <div class="error-message" id="communityError">Harap pilih komunitas</div>
                 </div>
                 <div class="form-group">
                     <label for="location">Lokasi*</label>
@@ -838,21 +899,7 @@
 
     <script>
         // Sample campaign data
-        const campaigns = [{
-            id: 1,
-            title: "Plastic Free July",
-            description: "Tantangan untuk tidak menggunakan plastik sekali pakai selama bulan Juli.",
-            startDate: "2025-06-15",
-            endDate: "2025-07-31",
-            participants: 42
-        }, {
-            id: 2,
-            title: "Bank Sampah Digital",
-            description: "Program pengumpulan sampah yang bisa ditukar dengan poin digital.",
-            startDate: "2025-06-01",
-            endDate: "2025-08-30",
-            participants: 78
-        }];
+        const campaigns = [];
 
         // Calendar variables
         let currentMonth = new Date().getMonth();
@@ -870,21 +917,23 @@
             fetch("http://localhost:8080/api/posts")
                 .then(res => res.json())
                 .then(data => {
-                    events = Array.isArray(data) ? data : []; // Ensure events is always an array
-
+                    events = Array.isArray(data) ? data : [];
                     renderEvents();
+                    renderCampaigns();       // For main section
+                    renderLatestCampaigns(); // ✅ For sidebar
                     renderUpcomingEvents();
 
                     if (events.length > 0) {
-                        selectEvent(events[0]); // Only select if events exist
+                        selectEvent(events[0]);
                     } else {
-                        showNoCampaignsUI(); // Show empty state
+                        showNoCampaignsUI();
                     }
+                    generateCalendar(currentMonth, currentYear); // ✅ move here
                 })
-                .catch(err => {
-                    console.error("Fetch error:", err);
-                    showErrorUI(); // Show error state
-                });
+            .catch(err => {
+                console.error("Fetch error:", err);
+                showErrorUI();
+            });
         }
 
         function showNoCampaignsUI() {
@@ -908,9 +957,6 @@
         const calendarGrid = document.getElementById('calendarGrid');
         const prevMonthBtn = document.getElementById('prevMonth');
         const nextMonthBtn = document.getElementById('nextMonth');
-        const createModal = document.getElementById('createModal');
-        const openCreateModalBtn = document.getElementById('openCreateModal');
-        const closeCreateModalBtn = document.getElementById('closeCreateModal');
         const campaignForm = document.getElementById('campaignForm');
         const chatContainer = document.getElementById('chatContainer');
         const chatInput = document.getElementById('chatInput');
@@ -936,12 +982,34 @@
         const membersGrid = document.getElementById('membersGrid');
         const chatTitle = document.getElementById('chatTitle');
 
+        let joinedCampaignIds = []; // ✅ prevent crash if not set
+
         // Initialize the page
         function init() {
+            populateCommunityDropdown();
+            const openCreateModalBtn = document.getElementById('openCreateModal');
+            const closeCreateModalBtn = document.getElementById('closeCreateModal');
+            const createModal = document.getElementById('createModal');
+
+            openCreateModalBtn.addEventListener('click', () => {
+                createModal.style.display = 'flex';
+            });
+
+            closeCreateModalBtn.addEventListener('click', () => {
+                createModal.style.display = 'none';
+                resetForm();
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === createModal) {
+                    createModal.style.display = 'none';
+                    resetForm();
+                }
+            });
             loadEvents(); // load from backend
             renderUpcomingEvents();
             renderCampaigns();
-            generateCalendar(currentMonth, currentYear);
+            renderLatestCampaigns();
 
             // Event listeners
             prevMonthBtn.addEventListener('click', () => {
@@ -1015,21 +1083,24 @@
             // Safely extract all properties
             const safeEvent = {
                 title: event.title || "Untitled Campaign",
-                community: event.community || "No Community",
-                description: event.description ?
-                    event.description.substring(0, 100) + "..." : "No description available",
+                communityName: event.community && event.community.communityName ? event.community.communityName : "No Community",
+                content: event.content || "No description available",
                 members: Array.isArray(event.members) ? event.members : []
             };
 
-            // Update UI
-            mainTitle.textContent = safeEvent.title;
-            communityName.textContent = safeEvent.community;
-            communityDesc.textContent = safeEvent.description;
+            const startDate = new Date(event.startDate).toLocaleDateString("id-ID", {
+                day: 'numeric', month: 'long', year: 'numeric'
+            });
+            const timeRange = `${event.startTime || "-"} - ${event.endTime || "-"}`;
+            mainTitle.textContent = `${event.title} (${startDate}, ${timeRange})`;
+            communityName.textContent = safeEvent.communityName;
+            communityDesc.textContent = safeEvent.content;
+
             renderMembers(safeEvent.members);
 
             // Load chat only if event has ID
-            if (event.id) {
-                loadChatMessages(event.id);
+            if (event.idPost) {
+                loadChatMessages(event.idPost);
             } else {
                 chatContainer.innerHTML = "<p>No chat available</p>";
             }
@@ -1054,89 +1125,15 @@
 
         // Render events list
         function renderEvents() {
-            const email = localStorage.getItem('userEmail');
-            if (!email) {
-                console.error("No user email found");
-                return;
-            }
+            const container = document.getElementById("eventsList");
+            container.innerHTML = "";
 
-            // Clear existing events
-            eventsList.innerHTML = '';
-
-            // Check if we have events to render
-            if (!events || events.length === 0) {
-                eventsList.innerHTML = '<li>No events available</li>';
-                return;
-            }
-
-            events.forEach(event => {
-                const eventItem = document.createElement('li');
-                eventItem.dataset.id = event.id;
-
-                // Safely handle date - this is the critical fix
-                let eventDate = "Date not specified";
-                if (event.startDate) {
-                    try {
-                        // Parse date regardless of input format
-                        const dateObj = new Date(event.startDate);
-                        if (!isNaN(dateObj.getTime())) {
-                            eventDate = dateObj.toLocaleDateString('id-ID', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                            });
-                        }
-                    } catch (e) {
-                        console.error("Date parsing error:", e);
-                    }
-                }
-
-                eventItem.innerHTML = `
-            <div class="event-title">${event.title || 'Untitled Event'}</div>
-            <div class="event-date">${eventDate}</div>
-            <p>${event.description || event.content || 'No description available'}</p>
-            <button class="join-btn ${event.joined ? 'joined-btn' : ''}">
-                ${event.joined ? 'Joined' : 'Join'}
-            </button>
-        `;
-
-                eventsList.appendChild(eventItem);
-
-                // Show details on list item click
-                eventItem.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('join-btn')) {
-                        selectEvent(event);
-                    }
-                });
-            });
-
-            // Attach behavior to all join buttons
-            document.querySelectorAll('.join-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const eventId = parseInt(this.closest('li').dataset.id);
-                    const event = events.find(e => e.id === eventId);
-
-                    if (!event) return;
-
-                    // Toggle the visual state immediately (UX improvement)
-                    this.classList.toggle('joined-btn');
-                    const wasJoined = this.textContent === 'Joined';
-                    this.textContent = wasJoined ? 'Join' : 'Joined';
-
-                    // API call to update server state
-                    const action = wasJoined ? 'unfollow' : 'follow';
-                    fetch(`/api/posts/${eventId}/${action}?email=${encodeURIComponent(localStorage.getItem('userEmail'))}`, {
-                        method: 'POST'
-                    }).catch(err => {
-                        // Revert if API fails
-                        this.classList.toggle('joined-btn');
-                        this.textContent = wasJoined ? 'Joined' : 'Join';
-                        console.error("Error:", err);
-                    });
-                });
+            const sorted = [...events].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+            sorted.forEach(event => {
+                container.appendChild(createEventCard(event));
             });
         }
+
         // Show event details in modal
         function showEventDetails(eventId) {
             const event = events.find(e => e.id === eventId);
@@ -1205,7 +1202,7 @@
         // Send a new chat message
         function sendMessage() {
             // Validate current event and user
-            if (!currentEvent || !currentEvent.id) {
+            if (!currentEvent || !currentEvent.idPost) {
                 console.error("No event selected");
                 return;
             }
@@ -1222,7 +1219,7 @@
             // Disable send button during request
             sendMessageBtn.disabled = true;
 
-            fetch(`http://localhost:8080/api/posts/${currentEvent.id}/chat?email=${encodeURIComponent(email)}`, {
+            fetch(`http://localhost:8080/api/posts/${currentEvent.idPost}/chat?email=${encodeURIComponent(email)}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -1235,7 +1232,7 @@
                 .then(response => {
                     if (!response.ok) throw new Error("Send failed");
                     chatInput.value = "";
-                    loadChatMessages(currentEvent.id); // Refresh messages
+                    loadChatMessages(currentEvent.idPost); // Refresh messages
                 })
                 .catch(err => {
                     console.error("Chat error:", err);
@@ -1264,20 +1261,22 @@
         function renderUpcomingEvents() {
             upcomingEvents.innerHTML = '';
 
-            // Sort events by date
+            // Sort events by start date ascending
             const sortedEvents = [...events].sort((a, b) =>
-                new Date(a.startDate) - new Date(b.startDate));
+                new Date(a.startDate) - new Date(b.startDate)
+            );
 
-            sortedEvents.forEach(event => {
+            // Only take the first 2 events
+            const limitedEvents = sortedEvents.slice(0, 2);
+
+            limitedEvents.forEach(event => {
                 const startDate = new Date(event.startDate);
-                const endDate = new Date(event.endDate);
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-                    "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
-                ];
+                    "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
                 const eventElement = document.createElement('div');
                 eventElement.className = 'upcoming-event';
-                eventElement.dataset.id = event.id;
+                eventElement.dataset.id = event.idPost;
 
                 eventElement.innerHTML = `
                     <div class="event-date">
@@ -1286,7 +1285,7 @@
                     </div>
                     <div class="event-details">
                         <h4>${event.title}</h4>
-                        <p>${event.startTime} - ${event.endTime}</p>
+                        <p>${(event.startTime || "").substring(0,5)} - ${(event.endTime || "").substring(0,5)}</p>
                         <p>${event.location}</p>
                         <p>${event.joined ? '✔ Anda telah bergabung' : ''}</p>
                     </div>
@@ -1301,31 +1300,124 @@
         }
 
         // Render campaigns
+        // This function renders the full events list styled like the card in the image
+// This function renders the full events list styled like the reference
         function renderCampaigns() {
-            campaignsList.innerHTML = '';
+            const container = document.getElementById("eventsList");
+            container.innerHTML = "";
 
-            campaigns.forEach(campaign => {
-                const startDate = new Date(campaign.startDate);
-                const endDate = new Date(campaign.endDate);
-                const dateOptions = {
-                    day: 'numeric',
-                    month: 'short'
-                };
-
-                const campaignElement = document.createElement('div');
-                campaignElement.className = 'campaign-item-sidebar';
-
-                campaignElement.innerHTML = `
-                    <h4 class="campaign-title-sidebar">${campaign.title}</h4>
-                    <p>${campaign.description}</p>
-                    <div class="campaign-meta-sidebar">
-                        <span>${startDate.toLocaleDateString('id-ID', dateOptions)} - ${endDate.toLocaleDateString('id-ID', dateOptions)}</span>
-                        <span>${campaign.participants} peserta</span> <!-- Ini akan menampilkan jumlah peserta -->
-                    </div>
-                `;
-
-                campaignsList.appendChild(campaignElement);
+            const sorted = [...events].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+            sorted.forEach(campaign => {
+                container.appendChild(createEventCard(campaign));
             });
+        }
+
+        function renderLatestCampaigns() {
+            const container = document.getElementById("campaignList");
+            container.innerHTML = "";
+
+            // Sort newest first
+            const sorted = [...events].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+            const latestTwo = sorted.slice(0, 2); // ⬅️ only 2 newest campaigns
+
+            latestTwo.forEach(campaign => {
+                container.appendChild(createSidebarCampaignCard(campaign));
+            });
+        }
+
+        // Creates a campaign card for the main event list (left section)
+        function createEventCard(event) {
+    const isUserJoined = joinedCampaignIds.includes(event.idPost);
+
+    const wrapper = document.createElement("li");
+    wrapper.className = "event-card";
+
+    const header = document.createElement("div");
+    header.className = "event-card-header";
+
+    const startDate = new Date(event.startDate);
+    const dateFormatted = startDate.toLocaleDateString("id-ID", {
+        day: "numeric", month: "long", year: "numeric"
+    });
+    const timeRange = `${(event.startTime || "").substring(0,5)} - ${(event.endTime || "").substring(0,5)}`;
+    const title = document.createElement("span");
+    title.className = "event-card-title";
+    title.textContent = `${event.title || "Untitled Campaign"} (${dateFormatted} ${timeRange})`;
+
+    header.appendChild(title);
+
+    const description = document.createElement("p");
+    description.className = "event-card-desc";
+    description.textContent = truncateText(event.content || "", 85);
+
+    const joinBtn = document.createElement("button");
+    joinBtn.className = `join-btn ${isUserJoined ? "joined-btn" : ""}`;
+    joinBtn.textContent = isUserJoined ? "Joined" : "Join";
+
+    joinBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        const userEmail = localStorage.getItem("userEmail");
+        if (!userEmail) {
+            alert("You must be logged in to join.");
+            return;
+        }
+
+        const action = isUserJoined ? "unfollow" : "follow";
+
+        fetch(`/api/posts/${event.idPost}/${action}?email=${encodeURIComponent(userEmail)}`, {
+            method: "POST"
+        }).then(() => {
+            if (isUserJoined) {
+                joinedCampaignIds = joinedCampaignIds.filter(id => id !== event.idPost);
+            } else {
+                joinedCampaignIds.push(event.idPost);
+            }
+            renderEvents(); // refresh
+        }).catch(err => {
+            console.error("❌ Join/Unjoin failed", err);
+        });
+    });
+
+    wrapper.appendChild(header);
+    wrapper.appendChild(description);
+    wrapper.appendChild(joinBtn);
+
+    wrapper.addEventListener("click", () => selectEvent(event));
+
+    return wrapper;
+}
+
+
+        // Creates sidebar card for "Campaign Terbaru"
+        function createSidebarCampaignCard(campaign) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "campaign-item-sidebar";
+
+            const title = document.createElement("div");
+            title.className = "campaign-title-sidebar";
+            title.textContent = campaign.title;
+
+            const description = document.createElement("p");
+            description.textContent = truncateText(campaign.description || campaign.content || "", 80);
+
+            const dateRange = document.createElement("div");
+            dateRange.className = "campaign-meta-sidebar";
+            dateRange.innerHTML = `
+                <span>${campaign.startDate} - ${campaign.endDate}</span>
+                <span>${campaign.participants || 0} peserta</span>
+            `;
+
+            wrapper.appendChild(title);
+            wrapper.appendChild(description);
+            wrapper.appendChild(dateRange);
+
+            return wrapper;
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text) return "";
+            return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
         }
 
         // Generate calendar
@@ -1398,130 +1490,140 @@
         }
 
         // Handle form submission
-        function handleFormSubmit(e) {
-            e.preventDefault();
+        function handleFormSubmit(event) {
+        event.preventDefault();
 
-            // Validate form
-            let isValid = true;
-            const requiredFields = [
-                'eventName', 'community', 'location',
-                'startDate', 'endDate',
-                'startTime', 'endTime',
-                'description'
-            ];
+        const requiredFields = [
+            'eventName', 'communitySelect', 'location',
+            'startDate', 'endDate',
+            'startTime', 'endTime',
+            'description'
+        ];
 
-            requiredFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                const errorElement = document.getElementById(`${fieldId}Error`);
+        let hasError = false;
 
-                if (!field.value) {
-                    errorElement.style.display = 'block';
-                    isValid = false;
-                } else {
-                    errorElement.style.display = 'none';
-                }
-            });
+        requiredFields.forEach(field => {
+            const input = document.getElementById(field);
+            const error = document.getElementById(field + 'Error');
 
-            if (!isValid) return;
+            if (!input || input.value.trim() === '' || input.value === 'default') {
+                if (error) error.style.display = 'block';
+                hasError = true;
+            } else {
+                if (error) error.style.display = 'none';
+            }
+        });
 
-            // Create new event
-            const email = localStorage.getItem('userEmail'); // optional if needed
-            const newPost = {
-                title: document.getElementById('eventName').value,
-                content: document.getElementById('description').value,
-                postPic: document.getElementById('eventImage').files[0] ?
-                    URL.createObjectURL(document.getElementById('eventImage').files[0]) : "https://via.placeholder.com/600x300?text=Event",
-                location: document.getElementById('location').value,
-                startDate: document.getElementById('startDate').value,
-                endDate: document.getElementById('endDate').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                favorite: 0,
-                follow: 0,
-                community: {
-                    idCommunity: parseInt(document.getElementById('communityId').value) // 🔁 You’ll need this input
-                }
-            };
+        if (hasError) return;
 
-            fetch('http://localhost:8080/api/posts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newPost)
+        // Build the post (campaign) object
+        const newPost = {
+            title: document.getElementById('eventName').value,
+            content: document.getElementById('description').value,
+            location: document.getElementById('location').value,
+            startDate: document.getElementById('startDate').value,
+            endDate: document.getElementById('endDate').value,
+            startTime: document.getElementById('startTime').value,
+            endTime: document.getElementById('endTime').value,
+            favorite: 0,
+            follow: 0,
+            community: {
+                idCommunity: parseInt(document.getElementById('communitySelect').value)
+            }
+        };
+
+        console.log("Submitting new campaign:", newPost);
+
+        fetch("http://localhost:8080/api/posts", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newPost)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create campaign");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Campaign created:", data);
+            const imageFile = document.getElementById('eventImage').files[0];
+
+            if (imageFile && data.idPost) {
+                const formData = new FormData();
+                formData.append("postId", data.idPost);
+                formData.append("photo", imageFile);
+
+                fetch("http://localhost:8080/api/posts/photo", {
+                    method: "PUT",
+                    body: formData
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to create post');
-                    }
-                    return response.json();
-                })
-                .then(createdPost => {
-                    alert('Campaign berhasil dibuat!');
-                    resetForm();
-                    createModal.style.display = 'none';
-                    loadEvents(); // Refresh the list
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Gagal membuat campaign: ' + error.message);
-                });
+                .then(res => res.text())
+                .then(msg => console.log("✅ Post image uploaded:", msg))
+                .catch(err => console.error("❌ Image upload failed:", err));
+            }
 
-
-            // Create new campaign
-            const newCampaign = {
-                id: campaigns.length + 1,
-                title: document.getElementById('eventName').value,
-                description: document.getElementById('description').value,
-                startDate: document.getElementById('startDate').value,
-                endDate: document.getElementById('endDate').value,
-                participants: 0
-            };
-
-            // campaigns.push(newCampaign);
-
-            // Reset form and close modal
-            resetForm();
-            createModal.style.display = 'none';
-
-            // Update UI
-            renderEvents();
-            renderUpcomingEvents();
-            renderCampaigns();
-            generateCalendar(currentMonth, currentYear);
-
-            // Select the new event
-            selectEvent(newPost);
-
-            // Add announcement to chat
-            const newChatMessage = {
-                id: newPost.chats.length + 1,
-                sender: "System",
-                avatar: "",
-                message: `Event baru telah dibuat: "${newPost.title}" pada ${new Date(newPost.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}. Jangan lupa daftar!`,
-                time: new Date().toLocaleTimeString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }),
-                isCurrentUser: false
-            };
-            newPost.chats.push(newChatMessage);
-            renderChatMessages(newPost.chats);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            alert('Campaign berhasil dibuat dan ditambahkan ke Event Mendatang!');
-        }
+            resetForm(); // ⬅️ move this AFTER image upload
+            document.getElementById('createModal').style.display = 'none';
+            loadEvents(); // Refresh list
+        })
+        .catch(error => {
+            console.error("Error creating campaign:", error);
+            alert("Failed to create campaign. Please try again.");
+        });
+    }
 
         // Reset form
         function resetForm() {
             campaignForm.reset();
-            document.getElementById('community').value = "Peduli_Mks";
+            document.getElementById('communitySelect').selectedIndex = 0;
 
             // Hide all error messages
             document.querySelectorAll('.error-message').forEach(el => {
                 el.style.display = 'none';
             });
         }
+
+        function populateCommunityDropdown() {
+        const email = localStorage.getItem('userEmail');
+        const dropdown = document.getElementById('communitySelect');
+
+        if (!email || !dropdown) {
+            console.error("Missing email or dropdown element");
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/posts/communities/created?email=${encodeURIComponent(email)}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to fetch communities");
+                return res.json();
+            })
+            .then(data => {
+                dropdown.innerHTML = '';
+
+                if (data.length === 0) {
+                    const option = document.createElement('option');
+                    option.disabled = true;
+                    option.selected = true;
+                    option.textContent = "No communities found";
+                    dropdown.appendChild(option);
+                    return;
+                }
+
+                data.forEach(comm => {
+                    const option = document.createElement('option');
+                    option.value = comm.idCommunity;
+                    option.textContent = comm.communityName;
+                    dropdown.appendChild(option);
+                });
+
+                console.log("Dropdown populated with:", data);
+            })
+            .catch(err => {
+                console.error("Dropdown fetch failed:", err);
+            });
+    }
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', init);
     </script>

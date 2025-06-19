@@ -1,13 +1,10 @@
 package com.example.demo.repo;
 
-import java.util.List;
-
+import com.example.demo.model.PostMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.model.Post;
-import com.example.demo.model.PostMessage;
+import java.util.List;
 
 public interface PostMessageRepository extends JpaRepository<PostMessage, Long> {
-
-    List<PostMessage> findByPost(Post post);
+    List<PostMessage> findByPost_IdPost(Long postId);
 }

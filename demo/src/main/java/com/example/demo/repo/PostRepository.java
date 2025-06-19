@@ -1,17 +1,10 @@
 package com.example.demo.repo;
 
-import java.util.List;
-
+import com.example.demo.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.model.Post;
-import com.example.demo.model.User;
+import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-
-    // Optional: get all posts from a specific community
-    List<Post> findByCommunityIdCommunity(Long idCommunity);
-
-    // Optional: get posts followed by a specific user
-    List<Post> findByFollowersContains(User user);
+    List<Post> findByCommunity_IdCommunity(Long idCommunity);
 }
