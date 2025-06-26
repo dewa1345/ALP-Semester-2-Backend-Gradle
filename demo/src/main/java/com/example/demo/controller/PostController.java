@@ -274,4 +274,16 @@ public class PostController {
             postRepo.deleteById(postId);
             return ResponseEntity.ok("Post deleted.");
         }
+
+        @GetMapping("/post/photo/{id}")
+        public ResponseEntity<byte[]> getPostImage(@PathVariable Long id) {
+            Optional<Post> opt = postRepo.findById(id);
+            if (opt.isEmpty() || opt.get().getPostPic() == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok()
+                    .header("Content-Type", "image/png")
+                    .body(opt.get().getPostPic());
+        }
 }

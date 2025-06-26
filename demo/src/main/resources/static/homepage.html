@@ -4,124 +4,459 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homepage Komunitas</title>
+  <title>Homepage</title>
   <link rel="stylesheet" href="homestyle.css" />
+  <style>
+    .icon-star,
+    .icon-plus {
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      /* Prevent icon from intercepting clicks */
+    }
+
+    .top-title {
+      font-size: 24px;
+      color: #1e5631;
+      margin-bottom: 20px;
+      padding-left: 30px;
+    }
+
+    .top-community {
+      padding: 40px 30px;
+    }
+
+    .community-container {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 20px;
+      justify-content: flex-start;
+      padding: 0 30px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+    }
+
+    .community-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .community-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .community-container::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 10px;
+    }
+
+    .community-container::-webkit-scrollbar-thumb:hover {
+      background: #45a049;
+    }
+
+    .community-card {
+      background-color: #c9f9c9;
+      border-radius: 15px;
+      padding: 10px;
+      width: 180px;
+      min-width: 180px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .community-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .community-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .community-card p {
+      font-weight: 600;
+      color: #ffffff;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .card-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 0 5px;
+    }
+
+    .card-buttons button {
+      background-color: #F6F4DC;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      height: 32px;
+      flex: 0 0 auto;
+    }
+
+    .card-buttons button:hover {
+      background-color: #e8e6c8;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-buttons button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Specific styling for love and join buttons */
+    .btn-love,
+    .btn-join {
+      position: relative;
+    }
+
+    .btn-love img,
+    .btn-join img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .btn-join .plus-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .btn-love.favorited {
+      background-color: #ffe4b5;
+    }
+
+    .btn-join.joined {
+      background-color: #d4edda;
+    }
+
+    .plus-text {
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+      pointer-events: none;
+      line-height: 1;
+      /* Prevent text from intercepting clicks */
+    }
+
+    .community-scroll-container {
+      position: relative;
+    }
+
+    .scroll-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(76, 175, 80, 0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 18px;
+      z-index: 10;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scroll-arrow:hover {
+      background-color: rgba(76, 175, 80, 1);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .scroll-arrow.left {
+      left: 5px;
+    }
+
+    .scroll-arrow.right {
+      right: 5px;
+    }
+
+    .scroll-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 
 <body style="min-height:100vh; display:flex; flex-direction:column;">
+
+  <!-- DialogFlow Chatbot -->
   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-<df-messenger
-  chat-icon="https:&#x2F;&#x2F;freeimghost.net&#x2F;images&#x2F;2025&#x2F;06&#x2F;19&#x2F;text-message-icon-png-10-removebg-preview-1.th.png"
-  intent="WELCOME"
-  chat-title="Ecobot"
-  agent-id="109a0375-027d-4ba9-b875-52b9f3220ef1"
-  language-code="id"
-></df-messenger>
+  <df-messenger
+    chat-icon="https://freeimghost.net/images/2025/06/19/text-message-icon-png-10-removebg-preview-1.th.png"
+    intent="WELCOME"
+    chat-title="Ecobot"
+    agent-id="109a0375-027d-4ba9-b875-52b9f3220ef1"
+    language-code="id">
+  </df-messenger>
+
+  <!-- Header -->
   <header>
-    <div class="logo" style="font-family: 'Poppins', sans-serif;">
-      EcoV
-    </div>
-
-
+    <div class="logo">EcoV</div>
     <div class="nav-profile-container">
       <nav>
-        <a href="#">Beranda</a>
-        <a href="about.html">Tentang kami</a>
-        <a href="community.html">Komunitas</a>
-        <a href="CCampaign.html">Kampanye</a>
+        <a href="#">Home</a>
+        <a href="About.html">About Us</a>
+        <a href="community.html">Community</a>
+        <a href="Campaign.html">Campaign</a>
       </nav>
-      <a href="profile.html" class="profile-icon">👤</a>
+      <a href="Profile.html" class="profile-icon">👤</a>
     </div>
   </header>
 
+  <!-- Main -->
   <main style="flex:1;">
+    <!-- 🎥 Trending Posts Carousel -->
     <section class="carousel">
-      <div class="carousel-overlay"></div> <!-- Lapisan gelap -->
-      <div class="carousel-track" id="carouselTrack">
-        <img src="Gambar/event1.jpeg" alt="slide 1" />
-        <img src="Gambar/event2.jpg" alt="slide 2" />
-        <img src="Gambar/event3.jpeg" alt="slide 3" />
-        <img src="Gambar/event4.jpeg" alt="slide 4" />
-        <img src="Gambar/event5.jpeg" alt="slide 5" />
-        <img src="Gambar/event6.jpg" alt="slide 6" />
-        <!-- Duplikasi untuk loop -->
-        <img src="Gambar/event1.jpeg" alt="slide 1" />
-        <img src="Gambar/event2.jpg" alt="slide 2" />
-        <img src="Gambar/event3.jpeg" alt="slide 3" />
-        <img src="Gambar/event4.jpeg" alt="slide 4" />
-        <img src="Gambar/event5.jpeg" alt="slide 5" />
-        <img src="Gambar/event6.jpg" alt="slide 6" />
-      </div>
-      <div class="dots" id="carouselDots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
+      <div class="carousel-track" id="carouselTrack"></div>
+      <div class="dots" id="carouselDots"></div>
     </section>
 
-
+    <!-- 👍 Top Communities -->
     <section class="top-community">
-      <h2 class="top-title">Komunitas teratas</h2>
-
-
-      <div class="community-container">
-        <div class="community-card">
-          <img src="Gambar/commu1.jpeg" alt="comm 1" />
-          <p>Pandawara</p>
-          <div class="card-buttons">
-            <button class="btn-love">❤️</button>
-            <button class="btn-join">+</button>
-          </div>
-        </div>
-
-        <div class="community-card">
-          <img src="Gambar/commu2.jpg" alt="comm 2" />
-          <p>R3 Community</p>
-          <div class="card-buttons">
-            <button class="btn-love">❤️</button>
-            <button class="btn-join">+</button>
-          </div>
-        </div>
-
-        <div class="community-card">
-          <img src="Gambar/commu3.jpeg" alt="comm 3" />
-          <p>Recycle.id</p>
-          <div class="card-buttons">
-            <button class="btn-love">❤️</button>
-            <button class="btn-join">+</button>
-          </div>
-        </div>
-
-        <div class="community-card">
-          <img src="Gambar/commu4.jpeg" alt="comm 4" />
-          <p>CleanUp</p>
-          <div class="card-buttons">
-            <button class="btn-love">❤️</button>
-            <button class="btn-join">+</button>
-          </div>
-        </div>
-
-        <div class="community-card">
-          <img src="Gambar/commu5.jpg" alt="comm 5" />
-          <p>Cinta Lingkungan</p>
-          <div class="card-buttons">
-            <button class="btn-love">❤️</button>
-            <button class="btn-join">+</button>
-          </div>
-        </div>
-      </div>
+      <h2 class="top-title" style="margin: 0;">Top Community</h2>
+      <div class="community-container" id="communityContainer"></div>
     </section>
-
-
   </main>
-  <footer class="bg-green-100 py-4 w-full shadow-md flex items-center justify-center">
-    <span class="text-center text-sm text-gray-600">&copy; 2025 Tim Creator 🌱. Hak cipta dilindungi undang-undang.</span>
+
+  <!-- Footer -->
+  <footer>
+    <span>&copy; 2025 Tim Creator 🌱. All rights reserved.</span>
   </footer>
 
-  <script src="homescript.js"></script>
-</body>
+  <!-- JavaScript -->
+  <script>
+  async function loadTrendingPosts() {
+    const track = document.getElementById("carouselTrack");
+    const dots = document.getElementById("carouselDots");
+    track.innerHTML = "";
+    dots.innerHTML = "";
 
+    try {
+      const res = await fetch('/api/homepage/trending-posts');
+      const posts = await res.json();
+      const defaultImg = 'Gambar/post-default.avif';
+
+      posts.forEach((post, i) => {
+        const img = document.createElement('img');
+        img.src = post.postPic || defaultImg;
+        img.alt = post.title;
+        img.onerror = () => img.src = defaultImg;
+        track.appendChild(img);
+
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => changeSlide(i));
+        dots.appendChild(dot);
+      });
+
+      let current = 0;
+      function changeSlide(idx) {
+        const slideWidth = track.clientWidth;
+        track.style.transform = `translateX(-${idx * (slideWidth + 10)}px)`;
+        document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+        dots.children[idx].classList.add('active');
+        current = idx;
+      }
+
+      setInterval(() => changeSlide((current + 1) % posts.length), 4000);
+    } catch (e) {
+      console.error("Error loading posts:", e);
+    }
+  }
+
+  function loadAllCommunities() {
+  const userId = localStorage.getItem("userId");
+  const container = document.getElementById("communityContainer");
+  if (!container) return;
+
+  container.innerHTML = "<p>Loading...</p>";
+  const defaultImg = "Gambar/community-default.jpg";
+
+  fetch(`/api/homepage/all-communities?userId=${userId}`)
+    .then(res => res.json())
+    .then(data => {
+      container.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        container.innerHTML = "<p>No communities found.</p>";
+        return;
+      }
+
+      data.forEach(community => {
+        const joined = community.joined;
+        const starred = community.starred;
+        const communityId = community.idCommunity;
+
+        const card = document.createElement("div");
+        card.className = "community-card";
+        card.innerHTML = `
+          <img src="${community.logoUrl || defaultImg}" alt="${community.communityName}"
+              onerror="this.src='${defaultImg}'" class="community-image" />
+          <h3 class="community-name">${community.communityName}</h3>
+          <div class="card-buttons">
+            <button class="btn-love">
+              <img src="${starred ? 'Gambar/Yellow_star.png' : 'Gambar/Black_star.png'}" class="icon-star"/>
+            </button>
+            <button class="btn-join">
+              <img src="Gambar/Centang.png" class="icon-plus" style="display: ${joined ? 'inline' : 'none'};">
+              <span class="plus-text" style="display: ${joined ? 'none' : 'inline'};">+</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+
+        // Now wire up the buttons properly
+        const starBtn = card.querySelector(".btn-love");
+        starBtn.onclick = () => toggleStar(communityId, starBtn);
+
+        const joinBtn = card.querySelector(".btn-join");
+        joinBtn.onclick = () => {
+          if (joined) {
+            leaveCommunity(communityId);
+          } else {
+            joinCommunity(communityId);
+          }
+        };
+      });
+
+      // Restore scroll position
+      const savedScroll = localStorage.getItem('homepageScrollPosition');
+      if (savedScroll) container.scrollLeft = parseInt(savedScroll);
+
+      setupScrollArrows();
+    })
+    .catch(err => {
+      container.innerHTML = "<p>Error loading communities.</p>";
+      console.error(err);
+    });
+}
+
+
+  function joinCommunity(id) {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return alert("Anda harus login untuk join komunitas.");
+
+    fetch(`/api/communities/${id}/join?userId=${userId}`, { method: "POST" })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        loadAllCommunities();
+      });
+  }
+
+  function leaveCommunity(id) {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return alert("Anda harus login untuk keluar dari komunitas.");
+
+    fetch(`/api/communities/${id}/leave?userId=${userId}`, { method: "DELETE" })
+      .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.text();
+      })
+      .then(msg => {
+        alert(msg);
+        loadAllCommunities();
+      })
+      .catch(err => {
+        alert("Error: " + err.message);
+      });
+  }
+
+  function toggleStar(communityId, btn) {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return alert("Anda harus login untuk memberi bintang.");
+
+    const img = btn.querySelector("img");
+    const isStarred = img.src.includes("Yellow");
+
+    const method = isStarred ? "DELETE" : "POST";
+    fetch(`/api/communities/${communityId}/star?userId=${userId}`, { method })
+      .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.text();
+      })
+      .then(msg => {
+        alert(msg);
+        img.src = isStarred ? "Gambar/Black_star.png" : "Gambar/Yellow_star.png";
+      })
+      .catch(err => alert("Error: " + err.message));
+  }
+
+  function setupScrollArrows() {
+    const container = document.getElementById('communityContainer');
+    const leftArrow = document.getElementById('scrollLeft');
+    const rightArrow = document.getElementById('scrollRight');
+
+    if (!container || !leftArrow || !rightArrow) return;
+
+    leftArrow.addEventListener('click', () => {
+      container.scrollBy({ left: -200, behavior: 'smooth' });
+    });
+
+    rightArrow.addEventListener('click', () => {
+      container.scrollBy({ left: 200, behavior: 'smooth' });
+    });
+
+    function updateArrowStates() {
+      const isAtStart = container.scrollLeft <= 10;
+      const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 10;
+
+      leftArrow.disabled = isAtStart;
+      rightArrow.disabled = isAtEnd;
+
+      const needsScroll = container.scrollWidth > container.clientWidth;
+      leftArrow.style.display = needsScroll ? 'flex' : 'none';
+      rightArrow.style.display = needsScroll ? 'flex' : 'none';
+    }
+
+    function saveScrollPosition() {
+      localStorage.setItem('homepageScrollPosition', container.scrollLeft.toString());
+    }
+
+    container.addEventListener('scroll', () => {
+      updateArrowStates();
+      saveScrollPosition();
+    });
+
+    setTimeout(updateArrowStates, 100);
+    window.addEventListener('resize', updateArrowStates);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadTrendingPosts();
+    loadAllCommunities();
+  });
+</script>
+
+</body>
 </html>

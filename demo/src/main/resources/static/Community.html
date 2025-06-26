@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title> EcoV</title>
+    <title> Community</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .bubble-chat {
@@ -30,6 +30,7 @@
             height: 24px;
             overflow: hidden;
         }
+
 
         .bubble-chat .bubble-tail svg {
             display: block;
@@ -108,10 +109,10 @@
         }
 
         /* NAVBAR STYLES */
-        .navbar {
-            width: 100vw;
-            height: 60px;
-            background: #235b37;
+        header {
+            width: 100%;
+            background: #339551;
+            /* sama seperti Homepage */
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -119,32 +120,60 @@
             top: 0;
             left: 0;
             z-index: 100;
+            padding: 0 16px;
+            height: 60px;
             box-shadow: 0 2px 8px rgba(35, 91, 55, 0.08);
         }
 
-        .navbar button {
-            margin-left: 24px;
-            background: #fff;
-            color: #2e944b;
-            border: 2px solid #2e944b;
-            border-radius: 8px;
-            padding: 8px 22px 8px 14px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 8px rgba(46, 148, 75, 0.07);
-            cursor: pointer;
-            transition: background 0.15s, color 0.15s;
+        #mainNavbar {
+            transform: translateY(0);
+            transition: transform 0.3s ease;
         }
 
-        .navbar span {
-            margin-right: 32px;
-            color: #fff;
+        #mainNavbar.hide-navbar {
+            transform: translateY(-100%);
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
             font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #678e34;
+        }
+
+        .profile-icon {
+            color: #fff;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.2s;
+        }
+
+        .profile-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .navbar-blur {
@@ -169,24 +198,57 @@
         .navbar-spacer {
             height: 70px;
         }
+
+        /* FOOTER STYLES */
+        footer {
+            width: 100%;
+            background: #c9f8c7;
+            padding: 12px 0;
+            /* posisi static agar footer hanya di bawah halaman, tidak menempel layar */
+            /* position: static; */
+            z-index: 10;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        footer .container a {
+            color: #678e34;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        footer .container a:hover {
+            color: #4a6b24;
+        }
     </style>
 </head>
 
-<body class="bg-green-50 text-gray-800 min-h-screen flex flex-col">
-    <!-- NAVBAR ATAS -->
-    <nav class="navbar">
-        <button onclick="window.history.back()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22"
-                height="22">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+<body class="bg-[#F6F4DC] min-h-screen text-gray-800">
+    <!-- NAVBAR ATAS BARU -->
+    <header id="mainNavbar" class="w-full flex items-center justify-between px-6 py-3 shadow-md"
+        style="position:fixed;top:0;left:0;z-index:100;">
+        <button onclick="window.history.back()"
+            class="flex items-center gap-2 bg-white text-[#357a38] font-bold px-4 py-2 rounded-lg shadow hover:bg-gray-100 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
             Kembali
         </button>
-        <span>Community</span>
-    </nav>
+        <span class="text-white text-2xl font-semibold pr-2">Community</span>
+    </header>
     <div class="navbar-spacer"></div>
     <main class="flex-grow">
-        <div class="container mx-auto py-8 px-4">
+        <div class="container mx-auto py-8 px-4" style="margin-bottom: 110px;">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-3xl font-bold text-[#678E34]">Forum Komunitas</h1>
             </div>
@@ -233,7 +295,7 @@
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Lokasi</label>
-                    <input type="text" name="Lokasi" class="w-full border rounded px-3 py-2" required>
+                    <input type="text" name="location" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Deskripsi Komunitas</label>
@@ -271,7 +333,7 @@
                         name: c.communityName,
                         description: c.description,
                         // Fix: use c.Location or c.location
-                        location: c.Location || c.location || "",
+                        location: c.location || c.location || "",
                         members: c.members,
                         logoUrl: c.logoUrl || null,
                         creatorId: c.creatorId
@@ -348,7 +410,10 @@
             });
 
         document.getElementById('communityContent').innerHTML = `
-            <h2 class="text-2xl font-bold text-[#678E34] mb-2">${c.name}</h2>
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-2xl font-bold text-[#678E34]">${c.name}</h2>
+                <span class="text-sm text-gray-500 italic">${c.location || 'Tanpa Lokasi'}</span>
+            </div>
             <p class="mb-4 text-gray-700">${c.description}</p>
             <div class="mb-6">
                 <h3 class="font-semibold text-lg mb-1">Anggota Komunitas</h3>
@@ -369,8 +434,8 @@
                     ? `<button onclick="deleteCommunity('${key}')" id="deleteBtn" class="fixed bottom-8 right-8 bg-red-700 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-900 z-50">Delete Komunitas</button>`
                     : (
                         joinedCommunities.includes(key)
-                            ? `<button onclick="leaveCommunity('${key}')" id="leaveBtn" class="fixed bottom-8 right-8 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-800 z-50">Leave Komunitas</button>`
-                            : `<button onclick="joinCommunity('${key}')" id="joinBtn" class="fixed bottom-8 right-8 bg-[#678E34] text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-[#4a6b24] z-50">Join Komunitas</button>`
+                            ? `<button onclick="leaveCommunity('${key}')" id="leaveBtn" class="fixed bottom-8 right-8 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-red-800 z-100">Leave Komunitas</button>`
+                            : `<button onclick="joinCommunity('${key}')" id="joinBtn" class="fixed bottom-8 right-8 bg-[#678E34] text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg hover:bg-[#4a6b24] z-100">Join Komunitas</button>`
                     )
             }
         `;
@@ -591,7 +656,7 @@
 
             const fd = new FormData(createForm);
             const communityName = fd.get('namakomunitas');
-            const location = fd.get('Lokasi');
+            const location = fd.get('location');
             const description = fd.get('deskripsi');
             const logoFile = fd.get('logo');
 
@@ -710,13 +775,21 @@
             alert("Error deleting community: " + (err.message || "Unknown error"));
         });
     }
+    // Navbar hide on scroll
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', function () {
+            const navbar = document.getElementById('mainNavbar');
+            if (!navbar) return;
+            if (window.scrollY > lastScrollY && window.scrollY > 60) {
+                // Scroll down
+                navbar.classList.add('hide-navbar');
+            } else {
+                // Scroll up
+                navbar.classList.remove('hide-navbar');
+            }
+            lastScrollY = window.scrollY;
+        });
     </script>
-    <!-- NAVBAR BAWAH (FOOTER) -->
-    <footer class="bg-green-100 py-4 w-full shadow-md">
-        <div class="container mx-auto px-4 text-center text-sm text-gray-600">
-            &copy; 2025 Tim Creator 🌱. Hak cipta dilindungi undang-undang.
-        </div>
-    </footer>
 </body>
 
 </html>

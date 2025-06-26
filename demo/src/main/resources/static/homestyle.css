@@ -4,12 +4,15 @@
   --green-med: #678e34;
   --white: #ffffff;
   --gray-light: #f0f0f0;
+  --fresh-leaf: #339551;
+  --navbar-bg: #339551;
 }
 
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-color: var(--white);
+  background-color: #F6F4DC;
+  /* Cream color */
 }
 
 /* Header */
@@ -21,8 +24,8 @@ header {
   height: 60px;
   /* Ubah jadi 60px agar sama dengan Community */
   padding: 0 2rem;
-  background-color: #235b37;
-  /* hijau gelap sesuai gambar */
+  background-color: var(--navbar-bg);
+  /* Fresh Leaf (from image) */
   color: var(--white);
   overflow: visible;
 }
@@ -163,7 +166,7 @@ top-community {
 }
 
 .community-card {
-  background-color: #c9f9c9;
+  background-color: var(--fresh-leaf) !important;
   border-radius: 15px;
   padding: 10px;
   width: 200px;
@@ -357,7 +360,8 @@ top-community {
 
 /* Footer */
 footer {
-  background-color: #d6fbe7;
+  background-color: var(--navbar-bg);
+  /* Fresh Leaf (from image) */
   min-height: 35px;
   /* diperkecil dari 60px */
   display: flex;
@@ -365,12 +369,68 @@ footer {
   justify-content: center;
   width: 100%;
   box-shadow: 0 2px 8px rgba(46, 148, 75, 0.08);
+  color: var(--white);
 }
 
 footer span {
-  color: #222;
+  color: var(--white);
   font-size: 0.75rem;
   /* diperkecil dari 0.95rem */
   font-family: 'Segoe UI', sans-serif;
   letter-spacing: 0.5px;
+}
+
+.card-buttons button {
+  width: 36px;
+  height: 36px;
+  background-color: #266533;
+  /* Basil color from image */
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.card-buttons img.icon-star,
+.card-buttons img.icon-plus {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+
+.post-card-panel {
+  padding-left: 30px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  margin-bottom: 40px;
+  background-color: var(--fresh-leaf) !important;
+  /* Fresh Leaf */
+  border-radius: 10px;
+}
+
+.post-card-panel::-webkit-scrollbar {
+  height: 8px;
+}
+
+.post-card-panel::-webkit-scrollbar-thumb {
+  background-color: #1e5631;
+  border-radius: 4px;
+}
+
+.community-card {
+  display: inline-block;
+  /* supaya bisa horizontal scroll */
+  vertical-align: top;
+  margin-right: 16px;
+  background-color: var(--fresh-leaf) !important;
+  border-radius: 15px;
+  padding: 10px;
+  width: 180px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

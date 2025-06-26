@@ -25,6 +25,7 @@ public class CommunityController {
     private final CommunityMsgRepository communityMsgRepository;
     private final CreatorRepository creatorRepository;
     private final UserRepository userRepository;
+    private final RatingUserRepository ratingUserRepository;
 
     @GetMapping
     public List<Map<String, Object>> getAllCommunities() {
@@ -35,7 +36,7 @@ public class CommunityController {
             map.put("idCommunity", c.getIdCommunity());
             map.put("communityName", c.getCommunityName());
             map.put("description", c.getDescription());
-            map.put("Location", c.getLocation());
+            map.put("location", c.getLocation());
             map.put("members", c.getMembers());
 
             // Serve logo as preview URL if available
@@ -63,7 +64,7 @@ public class CommunityController {
             map.put("idCommunity", community.getIdCommunity());
             map.put("communityName", community.getCommunityName());
             map.put("description", community.getDescription());
-            map.put("Location", community.getLocation());
+            map.put("location", community.getLocation());
             map.put("members", community.getMembers());
 
             if (community.getLogo() != null) {
@@ -92,7 +93,7 @@ public class CommunityController {
         String email = (String) requestData.get("email");
         String name = (String) requestData.get("communityName");
         String description = (String) requestData.get("description");
-        String Location = (String) requestData.get("Location");
+        String location = (String) requestData.get("location");
 
         try {
             if (communityRepository.findAll().stream().anyMatch(c -> c.getCommunityName().equalsIgnoreCase(name))) {
@@ -111,7 +112,7 @@ public class CommunityController {
             Community community = new Community();
             community.setCommunityName(name);
             community.setDescription(description);
-            community.setLocation(Location);
+            community.setLocation(location);
             community.setMembers(1);
             community.setCreator(creator);
             Community savedCommunity = communityRepository.save(community);
@@ -128,6 +129,9 @@ public class CommunityController {
             cu.setUser(user);
             cu.setCommunity(savedCommunity);
             communityUserRepository.save(cu);
+
+            System.out.println("Request payload: " + requestData);
+            System.out.println("Extracted location: " + location);
 
             return ResponseEntity.ok(savedCommunity);
         } catch (Exception e) {
@@ -284,4 +288,78 @@ public class CommunityController {
             return map;
         }).collect(Collectors.toList());
     }
+
+    @GetMapping("/all-with-status")
+    public ResponseEntity<List<Map<String, Object>>> getCommunitiesWithStatus(@RequestParam Long userId) {
+        List<Community> all = communityRepository.findAll();
+        Set<Long> joinedIds = communityUserRepository.findByIdUser(userId).stream()
+                .map(cu -> cu.getCommunity().getIdCommunity())
+                .collect(Collectors.toSet());
+
+        List<Map<String, Object>> result = all.stream().map(c -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("idCommunity", c.getIdCommunity());
+            map.put("communityName", c.getCommunityName());
+            map.put("description", c.getDescription());
+            map.put("location", c.getLocation());
+            map.put("members", c.getMembers());
+            map.put("joined", joinedIds.contains(c.getIdCommunity()));
+            map.put("logoUrl", c.getLogo() != null ? "/api/communities/photo/" + c.getIdCommunity() : null);
+            return map;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{id}/star")
+    public ResponseEntity<String> starCommunity(@PathVariable Long id, @RequestParam Long userId) {
+        Community community = communityRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        RatingUserId key = new RatingUserId();
+        key.setUserId(userId);
+        key.setCommunityId(id);
+
+        if (ratingUserRepository.existsById(key)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Already starred");
+        }
+
+        RatingUser rating = new RatingUser();
+        rating.setId(key);
+        rating.setUser(user);
+        rating.setCommunity(community);
+        rating.setActive(true);
+        ratingUserRepository.save(rating);
+
+        // 👉 Increase rating count
+        community.setRating(community.getRating() + 1);
+        communityRepository.save(community);
+
+        return ResponseEntity.ok("Community starred!");
+    }
+
+    // ❌ Unstar a community
+    @DeleteMapping("/{id}/star")
+    public ResponseEntity<String> unstarCommunity(@PathVariable Long id, @RequestParam Long userId) {
+        RatingUserId key = new RatingUserId();
+        key.setUserId(userId);
+        key.setCommunityId(id);
+
+        RatingUser rating = ratingUserRepository.findById(key).orElse(null);
+        if (rating == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You haven't starred this community.");
+        }
+
+        ratingUserRepository.deleteById(key);
+
+        Community community = communityRepository.findById(id).orElseThrow();
+        // 👇 Ensure rating doesn't go below 0
+        int newRating = Math.max(0, community.getRating() - 1);
+        community.setRating(newRating);
+        communityRepository.save(community);
+
+        return ResponseEntity.ok("Star removed.");
+    }
+
+    
 };

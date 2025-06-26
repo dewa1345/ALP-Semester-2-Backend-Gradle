@@ -4,198 +4,579 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EcoV</title>
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Homepage</title>
+  <link rel="stylesheet" href="homestyle.css" />
+  <script src="communityData.js"></script>
+  <style>
+    .icon-star,
+    .icon-plus {
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      /* Prevent icon from intercepting clicks */
+    }
+
+    .top-title {
+      font-size: 24px;
+      color: #1e5631;
+      margin-bottom: 20px;
+      padding-left: 30px;
+    }
+
+    .top-community {
+      padding: 40px 30px;
+    }
+
+    .community-container {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 20px;
+      justify-content: flex-start;
+      padding: 0 30px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+    }
+
+    .community-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .community-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .community-container::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 10px;
+    }
+
+    .community-container::-webkit-scrollbar-thumb:hover {
+      background: #45a049;
+    }
+
+    .community-card {
+      background-color: #c9f9c9;
+      border-radius: 15px;
+      padding: 10px;
+      width: 180px;
+      min-width: 180px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .community-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .community-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .community-card p {
+      font-weight: 600;
+      color: #ffffff;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .community-card.new-community {
+      animation: slideInUp 0.5s ease-out;
+      border: 2px solid #4CAF50;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 0 5px;
+    }
+
+    .card-buttons button {
+      background-color: #F6F4DC;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      height: 32px;
+      flex: 0 0 auto;
+    }
+
+    .card-buttons button:hover {
+      background-color: #e8e6c8;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-buttons button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Specific styling for love and join buttons */
+    .btn-love,
+    .btn-join {
+      position: relative;
+    }
+
+    .btn-love img,
+    .btn-join img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .btn-join .plus-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .btn-love.favorited {
+      background-color: #ffe4b5;
+    }
+
+    .btn-join.joined {
+      background-color: #d4edda;
+    }
+
+    .plus-text {
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+      pointer-events: none;
+      line-height: 1;
+      /* Prevent text from intercepting clicks */
+    }
+
+    .community-scroll-container {
+      position: relative;
+    }
+
+    .scroll-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(76, 175, 80, 0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 18px;
+      z-index: 10;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scroll-arrow:hover {
+      background-color: rgba(76, 175, 80, 1);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .scroll-arrow.left {
+      left: 5px;
+    }
+
+    .scroll-arrow.right {
+      right: 5px;
+    }
+
+    .scroll-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 
-<body class="bg-green-50 text-gray-800 flex flex-col min-h-screen">
-  <!-- NAVBAR ATAS SAMA PERSIS DENGAN COMMUNITY DAN CAMPAIGN -->
-  <nav
-    style="width:100vw; height:60px; background:#285C37; display:flex; align-items:center; justify-content:space-between; position:fixed; top:0; left:0; z-index:100; box-shadow:0 2px 8px rgba(40,92,55,0.08);">
-    <button onclick="window.history.back()"
-      style="margin-left:24px; background:#fff; color:#285C37; border:2px solid #285C37; border-radius:8px; padding:8px 22px 8px 14px; font-weight:600; font-size:1.1rem; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(40,92,55,0.07); cursor:pointer; transition:background 0.15s, color 0.15s;">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22"
-        height="22">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-      Kembali
-    </button>
-    <span style="margin-right:32px; color:#fff; font-size:1.5rem; font-weight:700; letter-spacing:1px;">Tentang kami</span>
-  </nav>
-  <div style="height:70px;"></div>
+<body style="min-height:100vh; display:flex; flex-direction:column;">
 
-  <!-- Main content (scrollable tapi tanpa scrollbar) -->
-  <main class="flex-grow overflow-y-auto no-scrollbar">
-    <div class="container mx-auto px-4 py-8 flex flex-col gap-8 pb-24">
-      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-        <!-- Deskripsi di kiri -->
-        <section class="lg:w-1/2 space-y-4">
-          <h3 class="text-xl font-bold">Tujuan Dibuatnya Website 🌿</h3>
-          <p>
-            Website ini dikembangkan sebagai media pembelajaran interaktif untuk
-            membantu mahasiswa memahami konsep–konsep pemrograman dan
-            pengembangan web modern. Dengan desain antarmuka yang sederhana
-            namun responsif 🌍, kami berharap setiap pengguna dapat belajar dan
-            berkontribusi dengan mudah.
-          </p>
-          <p>
-            Kami membuat website ini dengan tujuan mengedukasi dan mengajak masyarakat untuk melakukan kebiasaan recycle
-            yang peduli terhadap lingkungan 🌏.
-            Di dalamnya tersedia proyek edukatif, dokumentasi, serta tutorial mengenai teknologi dan gaya hidup
-            berkelanjutan.
-          </p>
-        </section>
-
-        <!-- Gambar di kanan -->
-        <aside class="lg:w-1/2 flex flex-col items-center mt-8 lg:mt-12">
-          <img src="https://i.pinimg.com/736x/77/6c/7d/776c7d29cc6726d01fca154e8441e33b.jpg"
-            class="rounded-2xl shadow-lg w-full h-auto object-cover border-4 border-[#678E34]" />
-          <p class="text-xs text-gray-600 mt-2 italic text-center max-w-xs">Ilustrasi: Edukasi dan kepedulian lingkungan
-            melalui teknologi.</p>
-        </aside>
-      </div>
-
-      <!-- Visi & Misi -->
-      <section class="space-y-4 text-justify">
-        <h2 class="text-xl font-bold">Visi &amp; Misi 🌳</h2>
-        <p>
-          Visi kami adalah menjadi platform terdepan yang menyediakan sumber
-          belajar pemrograman dan gaya hidup ramah lingkungan yang berkualitas tinggi, gratis, dan mudah diakses oleh
-          siapa saja. Kami percaya bahwa pengetahuan dan kepedulian terhadap bumi adalah fondasi masa depan 🌍.
-        </p>
-        <p>
-          Misi kami meliputi:
-        <ul class="list-disc pl-6">
-          <li>Menyediakan konten edukatif yang relevan dan inspiratif 📚</li>
-          <li>Memberikan ruang kolaborasi bagi komunitas pengembang dan pecinta lingkungan 👩‍💻👨‍💻</li>
-          <li>Mengajak masyarakat untuk aktif menerapkan prinsip reduce, reuse, dan recycle ♻️</li>
-          <li>Menghubungkan teknologi dan lingkungan untuk masa depan yang berkelanjutan 🌱</li>
-        </ul>
-        </p>
-      </section>
-
-      <!-- Sejarah Singkat -->
-      <section class="space-y-4 text-justify">
-        <h2 class="text-xl font-bold">Sejarah Singkat 🕰️</h2>
-        <p>
-          Website ini berawal dari proyek kecil sekelompok mahasiswa informatika yang peduli terhadap isu lingkungan.
-          Melihat kurangnya platform edukasi yang menggabungkan teknologi dan kesadaran ekologis, kami mulai membangun
-          website ini sejak tahun 2024 sebagai sarana edukasi dan kampanye digital ramah lingkungan.
-        </p>
-      </section>
-
-      <!-- Profil Tim -->
-      <section class="space-y-4 text-justify">
-        <h2 class="text-xl font-bold">Profil Tim 👥</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center">
-          <!-- Anggota 1 -->
-          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="Gambar/gerawrr.jpg" alt="Gerawrr"
-              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
-            <div class="text-center">
-              <div class="font-bold">Gerawrr</div>
-              <div class="text-xs text-gray-600">Developer Front-End & UI/UX Designer 🎨</div>
-            </div>
-          </div>
-          <!-- Anggota 2 -->
-          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="Gambar/Raka_foto.jpg" alt="Rakha"
-              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
-            <div class="text-center">
-              <div class="font-bold">Rakha</div>
-              <div class="text-xs text-gray-600">Developer Front-End & UI/UX Designer 🧠</div>
-            </div>
-          </div>
-          <!-- Anggota 3 -->
-          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="Gambar/mike.jpg" alt="Mike"
-              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
-            <div class="text-center">
-              <div class="font-bold">Mike</div>
-              <div class="text-xs text-gray-600">Developer Back-End & Database Engineer 📖</div>
-            </div>
-          </div>
-          <!-- Anggota 4 (Brit) -->
-          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="Gambar/brit pict.jpg" alt="Brit"
-              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
-            <div class="text-center">
-              <div class="font-bold">Brit</div>
-              <div class="text-xs text-gray-600">Developer Back-End & Database Engineer 💬</div>
-            </div>
-          </div>
-          <!-- Anggota 5 -->
-          <div class="flex flex-col items-center bg-white rounded-xl shadow p-4 w-full">
-            <img src="Gambar/dew.png" alt="Dew"
-              class="w-20 h-20 rounded-full border-2 border-[#678E34] object-cover mb-2" />
-            <div class="text-center">
-              <div class="font-bold">Dew</div>
-              <div class="text-xs text-gray-600">Project Coordinator & Public Relations 🦄</div>
-            </div>
-          </div>
-        </div>
-        <p class="text-center mt-4 text-sm text-gray-700">Bersama-sama kami menyatukan keahlian untuk menciptakan
-          platform yang bermanfaat dan ramah lingkungan 🌿.</p>
-      </section>
-
-      <!-- Tujuan -->
-      <section class="space-y-4 text-justify">
-        <h2 class="text-xl font-bold">Tujuan 🎯</h2>
-        <p>
-          Kami ingin membangun sebuah komunitas pembelajar dan penggiat lingkungan melalui platform yang inklusif,
-          modern, dan mudah digunakan.
-          Dengan menyediakan tutorial, proyek praktis, dan informasi penting, kami berharap pengguna dapat memahami
-          pentingnya teknologi dan peran mereka dalam menjaga bumi.
-        </p>
-      </section>
-
-      <!-- Poin Penting -->
-      <section class="space-y-4 text-justify">
-        <h2 class="text-xl font-bold">Poin-Poin Penting yang Membedakan Kami 💡</h2>
-        <ul class="list-disc pl-6">
-          <li>Perpaduan antara edukasi teknologi dan kampanye lingkungan 🌐🌱</li>
-          <li>Konten berbasis proyek nyata untuk pembelajaran praktis 🔧</li>
-          <li>Tampilan antarmuka yang ramah pengguna dan responsif 📱</li>
-          <li>Komunitas terbuka untuk kolaborasi dan pertukaran ide 🤝</li>
-        </ul>
-      </section>
-
-      <!-- Kontak -->
-      <section class="space-y-4 text-justify">
-        <h2 class="text-xl font-bold">Kontak 📬</h2>
-        <p>
-          Jika Anda memiliki pertanyaan, saran, atau ingin berkolaborasi, jangan ragu untuk menghubungi kami melalui:
-        <ul class="list-disc pl-6">
-          <li>Email: <a href="mailto:recycleteam@example.com"
-              class="text-green-600 underline">recycleteam@example.com</a></li>
-          <li>Instagram: <a href="https://instagram.com/recycle_edu" target="_blank"
-              class="text-green-600 underline">@recycle_edu</a></li>
-          <li>WhatsApp: 0812-3456-7890</li>
-        </ul>
-        Kami dengan senang hati menerima masukan dari Anda 😊.
-        </p>
-      </section>
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+  <df-messenger
+    chat-icon="https:&#x2F;&#x2F;freeimghost.net&#x2F;images&#x2F;2025&#x2F;06&#x2F;19&#x2F;text-message-icon-png-10-removebg-preview-1.th.png"
+    intent="WELCOME" chat-title="Ecobot" agent-id="109a0375-027d-4ba9-b875-52b9f3220ef1"
+    language-code="id"></df-messenger>
+  <header>
+    <div class="logo" style="font-family: 'Poppins', sans-serif;">
+      EcoV
     </div>
+    <div class="nav-profile-container">
+      <nav>
+        <a href="#">Home</a>
+        <a href="About.html">About Us</a>
+        <a href="Community.html">Community</a>
+        <a href="Campaign.html">Campaign</a>
+      </nav>
+      <a href="Profile.html" class="profile-icon">👤</a>
+    </div>
+  </header>
+
+  <main style="flex:1;">
+    <section class="carousel">
+      <div class="carousel-overlay"></div>
+      <div class="carousel-track" id="carouselTrack">
+        <img src="Gambar/event1.jpeg" alt="slide 1" />
+        <img src="Gambar/event2.jpg" alt="slide 2" />
+        <img src="Gambar/event3.jpeg" alt="slide 3" />
+        <img src="Gambar/event4.jpeg" alt="slide 4" />
+        <img src="Gambar/event5.jpeg" alt="slide 5" />
+        <img src="Gambar/event6.jpg" alt="slide 6" />
+        <img src="Gambar/event1.jpeg" alt="slide 1" />
+        <img src="Gambar/event2.jpg" alt="slide 2" />
+        <img src="Gambar/event3.jpeg" alt="slide 3" />
+        <img src="Gambar/event4.jpeg" alt="slide 4" />
+        <img src="Gambar/event5.jpeg" alt="slide 5" />
+        <img src="Gambar/event6.jpg" alt="slide 6" />
+      </div>
+      <div class="dots" id="carouselDots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+    <section class="top-community">
+      <div style="margin-bottom: 20px;">
+        <div>
+          <h2 class="top-title" style="margin: 0;">Top Community</h2>
+          <p id="communityCount" style="font-size: 12px; color: #666; margin: 5px 0 0 30px;">Loading...</p>
+        </div>
+      </div>
+      <div class="community-scroll-container">
+        <button class="scroll-arrow left" id="scrollLeft">‹</button>
+        <button class="scroll-arrow right" id="scrollRight">›</button>
+        <div class="community-container" id="communityContainer">
+          <!-- Community cards will be loaded dynamically -->
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- Footer copyright, hanya muncul saat scroll ke bawah -->
-  <footer id="copyrightFooter" class="bg-green-100 py-4 w-full shadow-md" style="display:none; position:fixed; left:0; bottom:0; z-index:40;">
-    <div class="container mx-auto px-4 text-center text-sm text-gray-600">
-      &copy; 2025 Tim Creator 🌱. Hak cipta dilindungi undang-undang.
-    </div>
+  <footer class="bg-green-100 py-4 w-full shadow-md flex items-center justify-center">
+    <span class="text-center text-sm text-gray-600">&copy; 2025 Tim Creator 🌱. All rights reserved.</span>
   </footer>
 
+  <script src="homescript.js"></script>
   <script>
-    // Tampilkan copyrightFooter hanya jika user scroll ke bawah (nyampe bawah halaman)
-    window.addEventListener('scroll', function() {
-      var copyright = document.getElementById('copyrightFooter');
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
-        copyright.style.display = 'block';
-      } else {
-        copyright.style.display = 'none';
+    // Dynamic Community Loading
+    function loadTopCommunities(highlightNew = false) {
+      const container = document.getElementById('communityContainer');
+      const countElement = document.getElementById('communityCount');
+
+      if (!container) {
+        console.error('Container not found');
+        return;
       }
+
+      if (!window.communityManager) {
+        console.error('CommunityManager not loaded');
+        setTimeout(() => loadTopCommunities(highlightNew), 100);
+        return;
+      }
+
+      console.log('Loading communities...'); // Debug log
+
+      // Get all communities instead of limiting to 5
+      const allCommunities = window.communityManager.getTopCommunities(50); // Increased limit
+
+      console.log('Found communities:', allCommunities.length); // Debug log
+
+      // Update community count
+      if (countElement) {
+        countElement.textContent = `${allCommunities.length} komunitas tersedia`;
+      }
+
+      // Save current scroll position
+      const currentScrollPosition = container.scrollLeft;
+
+      container.innerHTML = '';
+
+      allCommunities.forEach((community, index) => {
+        const communityCard = createCommunityCard(community);
+
+        // Highlight new communities
+        if (highlightNew && index === 0 && !community.isDefault) {
+          communityCard.classList.add('new-community');
+          setTimeout(() => {
+            communityCard.classList.remove('new-community');
+          }, 3000);
+        }
+
+        container.appendChild(communityCard);
+      });
+
+      // Restore or set scroll position
+      setTimeout(() => {
+        if (highlightNew && allCommunities.length > 0) {
+          // Auto-scroll to new community if highlighted
+          container.scrollTo({
+            left: 0,
+            behavior: 'smooth'
+          });
+        } else {
+          // Restore previous scroll position
+          const savedScrollPosition = localStorage.getItem('homepageScrollPosition');
+          if (savedScrollPosition) {
+            container.scrollLeft = parseInt(savedScrollPosition);
+          }
+        }
+
+        // Update arrow states after content is loaded
+        if (window.updateArrowStates) {
+          window.updateArrowStates();
+        }
+      }, 100);
+    }
+
+    function createCommunityCard(community) {
+      const card = document.createElement('div');
+      card.className = 'community-card';
+      card.setAttribute('data-community-key', community.key);
+
+      const isJoined = window.communityManager.isJoined(community.key);
+      const isFavorite = window.communityManager.isFavorite(community.key);
+
+      console.log(`Creating card for ${community.name}: isJoined=${isJoined}, isFavorite=${isFavorite}`); // Debug
+
+      card.innerHTML = `
+        <img src="${community.image}" alt="${community.name}" />
+        <p>${community.name}</p>
+        <div class="card-buttons">
+          <button class="btn-love ${isFavorite ? 'favorited' : ''}" data-community-key="${community.key}">
+            <img src="${isFavorite ? 'Gambar/Yellow_star.png' : 'Gambar/Black_star.png'}" alt="star" class="icon-star" />
+          </button>
+          <button class="btn-join ${isJoined ? 'joined' : ''}" data-community-key="${community.key}">
+            <img src="Gambar/Centang.png" alt="centang" class="icon-plus" style="display:${isJoined ? 'inline' : 'none'};">
+            <span class="plus-text" style="display:${isJoined ? 'none' : 'inline'};">+</span>
+          </button>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // Event handlers for community interactions
+    function setupCommunityEventListeners() {
+      const container = document.getElementById('communityContainer');
+      if (!container) {
+        console.error('Container not found for event listeners');
+        return;
+      }
+
+      // Remove existing listeners to prevent duplicates
+      const existingListener = container.getAttribute('data-listener-attached');
+      if (existingListener === 'true') {
+        console.log('Event listeners already attached');
+        return;
+      }
+
+      console.log('Setting up community event listeners...'); // Debug log
+
+      // Delegate event handling for dynamic content
+      container.addEventListener('click', function (e) {
+        console.log('Click detected on:', e.target); // Debug log
+
+        const target = e.target.closest('button');
+        if (!target) {
+          console.log('No button found'); // Debug log
+          return;
+        }
+
+        console.log('Button clicked:', target.className); // Debug log
+
+        const communityKey = target.getAttribute('data-community-key');
+        if (!communityKey) {
+          console.log('No community key found'); // Debug log
+          return;
+        }
+
+        if (target.classList.contains('btn-love')) {
+          console.log('Love button clicked for:', communityKey); // Debug log
+          // Toggle favorite
+          const isFavorite = window.communityManager.toggleFavoriteCommunity(communityKey);
+          console.log('New favorite status:', isFavorite); // Debug log
+
+          const img = target.querySelector('img');
+          if (img) {
+            const newSrc = isFavorite ? 'Gambar/Yellow_star.png' : 'Gambar/Black_star.png';
+            img.src = newSrc;
+            console.log('Changed image src to:', newSrc); // Debug log
+
+            // Force image reload if needed
+            img.onerror = function () {
+              console.error('Failed to load image:', newSrc);
+              this.src = isFavorite ? './Gambar/Yellow_star.png' : './Gambar/Black_star.png';
+            };
+          } else {
+            console.error('Image element not found in love button');
+          }
+
+          // Add visual feedback
+          target.classList.toggle('favorited', isFavorite);
+
+          // Force a visual update
+          target.style.backgroundColor = isFavorite ? '#ffe4b5' : '#F6F4DC';
+
+        } else if (target.classList.contains('btn-join')) {
+          console.log('Join button clicked for:', communityKey); // Debug log
+          // Toggle join
+          const isJoined = window.communityManager.toggleJoinCommunity(communityKey);
+          console.log('New joined status:', isJoined); // Debug log
+
+          const img = target.querySelector('img');
+          const plus = target.querySelector('.plus-text');
+
+          if (img && plus) {
+            img.style.display = isJoined ? 'inline' : 'none';
+            plus.style.display = isJoined ? 'none' : 'inline';
+            console.log('Updated visibility - img:', img.style.display, 'plus:', plus.style.display); // Debug log
+          } else {
+            console.error('Image or plus text element not found in join button', { img: !!img, plus: !!plus });
+          }
+
+          // Add visual feedback
+          target.classList.toggle('joined', isJoined);
+
+          // Force a visual update
+          target.style.backgroundColor = isJoined ? '#d4edda' : '#F6F4DC';
+
+          // Reload communities to reflect new order (joined communities appear first)
+          setTimeout(() => loadTopCommunities(), 100);
+        }
+      });
+
+      // Mark that event listeners have been attached
+      container.setAttribute('data-listener-attached', 'true');
+      console.log('Event listeners attached successfully'); // Debug log
+
+      // Setup scroll arrows
+      setupScrollArrows();
+    }
+
+    function setupScrollArrows() {
+      const container = document.getElementById('communityContainer');
+      const leftArrow = document.getElementById('scrollLeft');
+      const rightArrow = document.getElementById('scrollRight');
+
+      if (!container || !leftArrow || !rightArrow) return;
+
+      // Scroll left
+      leftArrow.addEventListener('click', () => {
+        container.scrollBy({
+          left: -200,
+          behavior: 'smooth'
+        });
+      });
+
+      // Scroll right
+      rightArrow.addEventListener('click', () => {
+        container.scrollBy({
+          left: 200,
+          behavior: 'smooth'
+        });
+      });
+
+      // Update arrow states based on scroll position
+      function updateArrowStates() {
+        const isAtStart = container.scrollLeft <= 10;
+        const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 10;
+
+        leftArrow.disabled = isAtStart;
+        rightArrow.disabled = isAtEnd;
+
+        // Hide arrows if content fits in container
+        const needsScroll = container.scrollWidth > container.clientWidth;
+        leftArrow.style.display = needsScroll ? 'flex' : 'none';
+        rightArrow.style.display = needsScroll ? 'flex' : 'none';
+      }
+
+      // Save scroll position to localStorage
+      function saveScrollPosition() {
+        localStorage.setItem('homepageScrollPosition', container.scrollLeft.toString());
+      }
+
+      // Listen to scroll events
+      container.addEventListener('scroll', () => {
+        updateArrowStates();
+        saveScrollPosition();
+      });
+
+      // Make updateArrowStates globally accessible
+      window.updateArrowStates = updateArrowStates;
+
+      // Initial arrow state update
+      setTimeout(updateArrowStates, 100);
+
+      // Update on window resize
+      window.addEventListener('resize', updateArrowStates);
+    }
+
+    // Listen for community updates from other pages
+    window.addEventListener('communityAdded', function (e) {
+      loadTopCommunities(true); // Highlight new community
     });
+
+    window.addEventListener('communityToggled', function (e) {
+      loadTopCommunities();
+    });
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('DOM Content Loaded - Initializing communities...'); // Debug log
+      setTimeout(() => {
+        setupCommunityEventListeners();
+        loadTopCommunities();
+      }, 50);
+    });
+
+    // Also initialize after a longer delay to ensure communityManager is loaded
+    setTimeout(() => {
+      console.log('Delayed initialization - Loading communities...'); // Debug log
+      if (!document.getElementById('communityContainer').getAttribute('data-listener-attached')) {
+        setupCommunityEventListeners();
+      }
+      loadTopCommunities();
+    }, 500);
   </script>
 </body>
 

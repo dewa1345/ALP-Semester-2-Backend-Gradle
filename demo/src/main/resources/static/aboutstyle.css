@@ -1,0 +1,11 @@
+/* aboutstyle.css */
+
+#copyrightFooter {
+    font-size: 0.875rem;
+    /* 14px, sama dengan text-sm Tailwind */
+}
+
+#copyrightFooter .container {
+    color: #fff;
+    line-height: 1.2;
+}

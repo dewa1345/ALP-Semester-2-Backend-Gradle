@@ -195,21 +195,25 @@
     }
 
     function verifikasiSukses() {
+      const email = localStorage.getItem("userEmail");
+      if (!email) return;
+
+      // Update frontend
       verifyBox.textContent = "🔒 Verifikasi Berhasil";
       verifyBox.classList.remove("bg-yellow-200", "text-brown-800");
       verifyBox.classList.add("bg-green-200", "text-green-800");
-    }
 
-    function toggleHeart(el) {
-      if (el.textContent === "♡") {
-        el.textContent = "❤️";
-        el.classList.add("text-red-500");
-      } else {
-        el.textContent = "♡";
-        el.classList.remove("text-red-500");
-      }
+      // Update backend
+      fetch(`http://localhost:8080/api/users/verify/${email}`, {
+        method: "PUT"
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Gagal menyimpan status verifikasi");
+          return res.text();
+        })
+        .then(msg => console.log("✅ Verifikasi disimpan:", msg))
+        .catch(err => console.error("❌ Verifikasi gagal:", err));
     }
-
 
     function toggleEditName() {
       const displayName = document.getElementById("display-name");
@@ -264,6 +268,9 @@
           .then(profile => {
             document.getElementById("display-name").textContent = "Nama: " + profile.name;
             document.getElementById("user-id").textContent = "ID: " + profile.id_user;
+            if (profile.verified) {
+              verifikasiSukses();
+            }
 
             // ✅ Fetch joined communities
             fetch(`http://localhost:8080/api/communities/user/${profile.id_user}`)

@@ -127,16 +127,27 @@ public class Usercontroller {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
         }
-        
+
         Map<String, Object> profile = new HashMap<>();
         profile.put("id_user", user.getId_user());
         profile.put("name", user.getName());
         profile.put("email", user.getEmail());
         profile.put("hasProfilePhoto", user.getFotoKTP() != null);
         profile.put("hasKTPPhoto", user.getFotoKTP() != null);
-        
+        profile.put("verified", user.isVerified());  // ✅ Add this line
+
         return ResponseEntity.ok(profile);
     }
 
+    @PutMapping("/verify/{email}")
+    public ResponseEntity<?> verifyUser(@PathVariable String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User tidak ditemukan");
+        }
 
+        user.setVerified(true);
+        userRepository.save(user);
+        return ResponseEntity.ok("User berhasil diverifikasi");
+    }
 }
