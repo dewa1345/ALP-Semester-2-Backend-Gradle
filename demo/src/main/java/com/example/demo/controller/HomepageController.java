@@ -34,9 +34,21 @@ public class HomepageController {
                 .collect(Collectors.toSet())
             : Collections.emptySet();
 
-        return allCommunities.stream()
-            .map(c -> mapCommunityToResponse(c, userId, joinedCommunityIds))
+        // Map each community to response and add starCount
+        List<Map<String, Object>> mapped = allCommunities.stream()
+            .map(c -> {
+                Map<String, Object> map = mapCommunityToResponse(c, userId, joinedCommunityIds);
+                // Count how many users starred this community
+                int starCount = ratingUserRepository.countByIdCommunityIdAndActiveTrue(c.getIdCommunity());
+                map.put("starCount", starCount);
+                return map;
+            })
             .collect(Collectors.toList());
+
+        // Sort by starCount descending
+        mapped.sort((a, b) -> Integer.compare((int) b.get("starCount"), (int) a.get("starCount")));
+
+        return mapped;
     }
 
     private Map<String, Object> mapCommunityToResponse(Community c, Long userId, Set<Long> joinedIds) {

@@ -17,5 +17,7 @@ public interface RatingUserRepository extends JpaRepository<RatingUser, RatingUs
 
     // Find a specific user's rating for a specific community
     Optional<RatingUser> findByIdUserIdAndIdCommunityId(Long userId, Long communityId);
+
+    int countByIdCommunityIdAndActiveTrue(Long communityId);
     
 }
